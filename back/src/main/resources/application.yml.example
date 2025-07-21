@@ -1,0 +1,58 @@
+# ARQUIVO DE EXEMPLO DE CONFIGURAÇÃO DA APLICAÇÃO
+# Copie este conteúdo para 'src/main/resources/application.yml'
+# As variáveis com ${...} são lidas do seu arquivo .env
+
+spring:
+  application:
+    name: ecommerce
+  # --- Configuração do Banco de Dados ---
+  datasource:
+    # Garanta que a porta corresponde à do seu contêiner Docker
+    url: jdbc:mysql://localhost:3306/ecommerce
+    username: ${MYSQL_USER}
+    password: ${MYSQL_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  # --- Configuração do Hibernate ---
+  jpa:
+    hibernate:
+      # Use 'update' para desenvolvimento. Para produção, considere 'validate' ou 'none'.
+      ddl-auto: update
+  # --- Configuração de E-mail ---
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+# --- Credenciais de Administrador do Sistema ---
+admin:
+  email: ${ADMIN_EMAIL}
+  password: ${ADMIN_PASSWORD}
+  fullName: ${ADMIN_FULL_NAME}
+
+# --- Chaves das APIs de Pagamento ---
+stripe:
+  secret:
+    key: ${STRIPE_SECRET_KEY}
+
+mercadopago:
+  public:
+    key: ${MERCADOPAGO_PUBLIC_KEY}
+  access:
+    token: ${MERCADOPAGO_ACCESS_TOKEN}
+
+# --- URL Base da Aplicação Web (Frontend) ---
+web:
+  base:
+    url: ${WEB_BASE_URL}
+
+# --- Segredo da Aplicação para JWT ---
+security:
+  token:
+    secret: ${SECURITY_TOKEN_SECRET}

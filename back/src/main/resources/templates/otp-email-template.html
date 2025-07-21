@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0; }
+        .container { max-width: 600px; margin: 20px auto; background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); overflow: hidden; }
+        .header { background-color: #4F46E5; color: #ffffff; padding: 20px; text-align: center; }
+        .header h1 { margin: 0; font-size: 24px; }
+        .content { padding: 30px; line-height: 1.6; color: #333; }
+        .content p { margin: 0 0 20px; }
+        .otp-code { font-size: 32px; font-weight: bold; color: #4F46E5; text-align: center; letter-spacing: 5px; margin: 20px 0; padding: 15px; background-color: #f0f0f0; border-radius: 5px; }
+        .footer { text-align: center; padding: 20px; font-size: 12px; color: #777; background-color: #f4f4f4; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header"><h1>Seu Código de Verificação</h1></div>
+    <div class="content">
+        <p>Olá,</p>
+        <p>Use o código abaixo para concluir o seu login ou registo. Este código é válido por 60 minutos.</p>
+        <div class="otp-code" th:text="${otpCode}">123456</div>
+        <p>Se não solicitou este código, por favor, ignore este e-mail. Nunca partilhe este código com ninguém.</p>
+        <p>Atenciosamente,<br/>Equipa Ecommerce</p>
+    </div>
+    <div class="footer" th:text="'© ' + ${currentYear} + ' Ecommerce. Todos os direitos reservados.'">© 2025 Ecommerce.
+        Todos os direitos reservados.
+    </div>
+</div>
+</body>
+</html>

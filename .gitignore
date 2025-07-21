@@ -1,0 +1,61 @@
+# General
+# Logs e arquivos temporários
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Arquivos de ambiente - NUNCA comitar senhas ou chaves
+.env
+.env.local
+.env.*.local
+
+# Frontend (Vite / React)
+/front/node_modules
+/front/dist
+/front/dist-ssr
+/front/.env.local
+
+# Backend (Java / Maven)
+/back/target/
+/back/HELP.md
+/back/src/main/resources/application.yml
+
+# Ignora todos os arquivos .jar, mas permite o wrapper do Maven
+*.jar
+!/back/.mvn/wrapper/maven-wrapper.jar
+
+# IntelliJ IDEA
+.idea/
+*.iws
+*.iml
+*.ipr
+
+# Visual Studio Code
+.vscode/
+
+# Mantém apenas as configurações de extensões recomendadas
+!/.vscode/extensions.json
+
+# Outras IDEs e SO
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+/nbproject/private/
+/nbbuild/
+/nbdist/
+/.nb-gradle/
+build/
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

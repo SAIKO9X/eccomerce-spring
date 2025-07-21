@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0; }
+        .container { max-width: 600px; margin: 20px auto; background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); overflow: hidden; }
+        .header { background-color: #1a237e; color: #ffffff; padding: 20px; text-align: center; }
+        .header h1 { margin: 0; font-size: 24px; }
+        .content { padding: 30px; line-height: 1.6; color: #333; }
+        .content p { margin: 0 0 20px; }
+        .button { display: inline-block; background-color: #1a237e; color: #ffffff; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold; }
+        .footer { text-align: center; padding: 20px; font-size: 12px; color: #777; background-color: #f4f4f4; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header"><h1>Bem-vindo ao Nosso Marketplace!</h1></div>
+    <div class="content">
+        <p>Olá, <strong th:text="${sellerName}">Vendedor</strong>!</p>
+        <p>Estamos muito felizes por ter-se juntado à nossa comunidade de vendedores. Para começar a vender, por favor,
+            verifique o seu endereço de e-mail clicando no botão abaixo.</p>
+        <p style="text-align: center;">
+            <a th:href="${verificationLink}" class="button">Verificar Meu E-mail</a>
+        </p>
+        <p>Se o botão não funcionar, pode copiar e colar o seguinte link no seu navegador:</p>
+        <p><a th:href="${verificationLink}" th:text="${verificationLink}">Link de Verificação</a></p>
+        <p>Atenciosamente,<br/>Equipa Ecommerce</p>
+    </div>
+    <div class="footer" th:text="'© ' + ${currentYear} + ' Ecommerce. Todos os direitos reservados.'">© 2025 Ecommerce.
+        Todos os direitos reservados.
+    </div>
+</div>
+</body>
+</html>

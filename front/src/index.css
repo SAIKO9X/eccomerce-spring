@@ -1,0 +1,89 @@
+@import "tailwindcss";
+
+@theme {
+  --font-poppins: "Poppins", "serif";
+  --font-playfair: "Playfair Display", "serif";
+  --breakpoint-xs: 30rem;
+}
+
+body {
+  font-family: "Poppins", serif;
+}
+
+/* ====== Slider Component Styles ====== */
+
+.swiper-slide {
+  position: relative;
+  width: 20%;
+  height: 40rem;
+  overflow: hidden;
+  transition: 500ms;
+  user-select: none;
+  border-radius: 1rem;
+  margin-left: 0;
+}
+
+.swiper-slide-active {
+  width: 50%;
+  border: 1.5px solid #c2c2c2;
+}
+
+.swiper-slide img {
+  position: absolute;
+  inset: 0;
+}
+
+.swiper-pagination {
+  bottom: 10px !important;
+}
+
+.swiper-pagination-bullet {
+  background: #ccc;
+}
+
+.swiper-pagination-bullet-active {
+  background: #000 !important;
+}
+
+@media (max-width: 1080px) {
+  .swiper-slide:not(.swiper-slide-active) .absolute:not(.deal-card-text) {
+    display: none;
+  }
+}
+
+@media (max-width: 800px) {
+  .swiper-slide-active {
+    width: 500px;
+  }
+  .swiper-slide {
+    height: 30rem;
+  }
+}
+
+@media (max-width: 650px) {
+  .swiper-slide-active {
+    width: 100%;
+  }
+}
+
+/* ====== Product Card Styles ====== */
+
+.card {
+  @apply relative w-64 h-80 rounded-lg overflow-hidden;
+}
+
+.card-media {
+  @apply absolute top-0 left-0 w-full h-full object-cover transition ease-in-out duration-500 cursor-pointer;
+}
+
+.indicator {
+  @apply absolute top-2 left-2;
+}
+
+.indicator-button {
+  @apply w-3 h-3 bg-white/50 border-none rounded-full cursor-pointer;
+}
+
+.indicator-button.active {
+  @apply bg-white;
+}

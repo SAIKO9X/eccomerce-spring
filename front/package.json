@@ -1,0 +1,49 @@
+{
+  "name": "eco-front",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/icons-material": "^6.4.1",
+    "@mui/material": "^6.4.1",
+    "@mui/styled-engine-sc": "^6.4.0",
+    "@mui/x-date-pickers": "^7.25.0",
+    "@reduxjs/toolkit": "^2.5.1",
+    "@tailwindcss/vite": "^4.0.0",
+    "axios": "^1.7.9",
+    "date-fns": "^4.1.0",
+    "dayjs": "^1.11.13",
+    "formik": "^2.4.6",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-redux": "^9.2.0",
+    "react-router-dom": "^7.1.3",
+    "react-slick": "^0.30.3",
+    "recharts": "^2.15.1",
+    "redux-thunk": "^3.1.0",
+    "styled-components": "^6.1.14",
+    "swiper": "^11.2.1",
+    "tailwindcss": "^4.0.0",
+    "yup": "^1.6.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.17.0",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "@vitejs/plugin-react": "^4.3.4",
+    "eslint": "^9.17.0",
+    "eslint-plugin-react": "^7.37.2",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "eslint-plugin-react-refresh": "^0.4.16",
+    "globals": "^15.14.0",
+    "vite": "^6.0.5"
+  }
+}
