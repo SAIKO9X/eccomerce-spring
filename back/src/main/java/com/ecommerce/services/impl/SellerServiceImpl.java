@@ -23,7 +23,6 @@ public class SellerServiceImpl implements SellerService {
   private final JWTProvider jwtProvider;
   private final PasswordEncoder passwordEncoder;
   private final AddressRepository addressRepository;
-  private final ValidationService validationService;
 
 
   @Override
@@ -34,18 +33,13 @@ public class SellerServiceImpl implements SellerService {
 
   @Override
   public Seller getSellerById(Long id) throws SellerException {
-    return sellerRepository.findById(id).orElseThrow(() -> new SellerException("seller not found with id: " + id));
+    return sellerRepository.findById(id).orElseThrow(() -> new SellerException("Vendedor não encontrado com o id: " + id));
   }
 
   @Override
   public Seller getSellerByEmail(String email) throws Exception {
-    Seller seller = sellerRepository.findByEmail(email);
-
-    if (seller == null) {
-      throw new Exception("seller not found with this email: " + email);
-    }
-
-    return seller;
+    return sellerRepository.findByEmail(email)
+      .orElseThrow(() -> new Exception("Vendedor não encontrado com o email: " + email));
   }
 
   @Override
@@ -55,12 +49,8 @@ public class SellerServiceImpl implements SellerService {
 
   @Override
   public Seller createSeller(Seller seller) throws Exception {
-    Seller sellerExists = sellerRepository.findByEmail(seller.getEmail());
-
-    validationService.validateEmailUniqueness(seller.getEmail());
-
-    if (sellerExists != null) {
-      throw new Exception("There is already a seller with that email, use a different email");
+    if (sellerRepository.findByEmail(seller.getEmail()).isPresent()) {
+      throw new Exception("Já existe um vendedor com esse e-mail, use um e-mail diferente");
     }
 
     Address savedAddress = addressRepository.save(seller.getPickupAddress());
@@ -92,23 +82,18 @@ public class SellerServiceImpl implements SellerService {
     if (seller.getSellerName() != null) {
       existingSeller.setSellerName(seller.getSellerName());
     }
-
     if (seller.getEmail() != null) {
       existingSeller.setEmail(seller.getEmail());
     }
-
     if (seller.getMobile() != null) {
       existingSeller.setMobile(seller.getMobile());
     }
-
     if (seller.getCNPJ() != null) {
       existingSeller.setCNPJ(seller.getCNPJ());
     }
-
     if (seller.getBusinessDetails() != null && seller.getBusinessDetails().getBusinessName() != null) {
       existingSeller.getBusinessDetails().setBusinessName(seller.getBusinessDetails().getBusinessName());
     }
-
     if (
       seller.getBankDetails() != null &&
         seller.getBankDetails().getAccountHoldName() != null &&
@@ -119,7 +104,6 @@ public class SellerServiceImpl implements SellerService {
       existingSeller.getBankDetails().setAccountNumber(seller.getBankDetails().getAccountNumber());
       existingSeller.getBankDetails().setIfscCode(seller.getBankDetails().getIfscCode());
     }
-
     if (
       seller.getPickupAddress() != null &&
         seller.getPickupAddress().getAddress() != null &&
@@ -134,7 +118,6 @@ public class SellerServiceImpl implements SellerService {
       existingSeller.getPickupAddress().setCity(seller.getPickupAddress().getCity());
       existingSeller.getPickupAddress().setState(seller.getPickupAddress().getState());
     }
-
     if (seller.getCNPJ() != null) {
       existingSeller.setCNPJ(seller.getCNPJ());
     }
@@ -146,7 +129,6 @@ public class SellerServiceImpl implements SellerService {
   public Seller verifyEmail(String email, String otp) throws Exception {
     Seller seller = getSellerByEmail(email);
     seller.setEmailVerified(true);
-
     return sellerRepository.save(seller);
   }
 
@@ -154,7 +136,6 @@ public class SellerServiceImpl implements SellerService {
   public Seller updateSellerAccountStatus(Long sellerId, AccountStatus status) throws Exception {
     Seller seller = getSellerById(sellerId);
     seller.setAccountStatus(status);
-
     return sellerRepository.save(seller);
   }
 }
