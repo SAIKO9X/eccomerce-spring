@@ -29,7 +29,8 @@ public class CustomUserServiceImpl implements UserDetailsService {
 
     if (username.startsWith(SELLER_PREFIX)) {
       String actualUsername = username.substring(SELLER_PREFIX.length());
-      Seller seller = sellerRepository.findByEmail(actualUsername);
+
+      Seller seller = sellerRepository.findByEmail(actualUsername).orElse(null);
 
       if (seller != null) {
         return buildUserDetails(seller.getEmail(), seller.getPassword(), seller.getRole());
@@ -42,12 +43,14 @@ public class CustomUserServiceImpl implements UserDetailsService {
       }
     }
 
-    throw new UsernameNotFoundException("user or seller not found with this email: " + username);
+    throw new UsernameNotFoundException("Usuário ou vendedor não encontrado com o email: " + username);
   }
 
   private UserDetails buildUserDetails(String email, String password, USER_ROLE role) {
 
-    if (role == null) role = USER_ROLE.ROLE_CUSTOMER;
+    if (role == null) {
+      role = USER_ROLE.ROLE_CUSTOMER;
+    }
 
     List<GrantedAuthority> authorityList = new ArrayList<>();
     authorityList.add(new SimpleGrantedAuthority(role.toString()));
