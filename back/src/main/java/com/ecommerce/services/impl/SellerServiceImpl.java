@@ -49,15 +49,16 @@ public class SellerServiceImpl implements SellerService {
 
   @Override
   public Seller createSeller(Seller seller) throws Exception {
-    if (sellerRepository.findByEmail(seller.getEmail()).isPresent()) {
+    String sellerEmail = seller.getBusinessDetails().getBusinessEmail();
+
+    if (sellerRepository.findByEmail(sellerEmail).isPresent()) {
       throw new Exception("Já existe um vendedor com esse e-mail, use um e-mail diferente");
     }
 
     Address savedAddress = addressRepository.save(seller.getPickupAddress());
 
     Seller newSeller = new Seller();
-    newSeller.setEmail(seller.getEmail());
-    newSeller.setPassword(passwordEncoder.encode(seller.getPassword()));
+    newSeller.setEmail(sellerEmail);
     newSeller.setSellerName(seller.getSellerName());
     newSeller.setCNPJ(seller.getCNPJ());
     newSeller.setPickupAddress(savedAddress);
