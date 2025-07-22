@@ -28,4 +28,18 @@ public class GlobalException {
     errorDetails.setTimestamp(LocalDateTime.now());
     return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
   }
+
+  @ExceptionHandler(Exception.class)
+  public ResponseEntity<ErrorDetails> handleGenericException(Exception ex, WebRequest request) {
+    ErrorDetails errorDetails = new ErrorDetails();
+    errorDetails.setError(ex.getMessage());
+    errorDetails.setDetails(request.getDescription(false));
+    errorDetails.setTimestamp(LocalDateTime.now());
+
+    if (ex.getMessage().contains("não encontrado")) {
+      return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
+    }
+
+    return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+  }
 }
