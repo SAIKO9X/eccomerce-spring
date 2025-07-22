@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -29,17 +30,14 @@ public class CustomUserServiceImpl implements UserDetailsService {
 
     if (username.startsWith(SELLER_PREFIX)) {
       String actualUsername = username.substring(SELLER_PREFIX.length());
-
-      Seller seller = sellerRepository.findByEmail(actualUsername).orElse(null);
-
-      if (seller != null) {
-        return buildUserDetails(seller.getEmail(), seller.getPassword(), seller.getRole());
+      Optional<Seller> seller = sellerRepository.findByEmail(actualUsername);
+      if (seller.isPresent()) {
+        return buildUserDetails(seller.get().getEmail(), seller.get().getPassword(), seller.get().getRole());
       }
-
     } else {
-      User user = userRepository.findByEmail(username);
-      if (user != null) {
-        return buildUserDetails(user.getEmail(), user.getPassword(), user.getRole());
+      Optional<User> user = userRepository.findByEmail(username);
+      if (user.isPresent()) {
+        return buildUserDetails(user.get().getEmail(), user.get().getPassword(), user.get().getRole());
       }
     }
 

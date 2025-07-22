@@ -13,7 +13,7 @@ public class ValidationService {
   private final SellerRepository sellerRepository;
 
   public void validateEmailUniqueness(String email) throws Exception {
-    if (userRepository.findByEmail(email) != null || sellerRepository.findByEmail(email) != null) {
+    if (userRepository.findByEmail(email).isPresent() || sellerRepository.findByEmail(email).isPresent()) {
       throw new Exception("Email already in use by another user or seller.");
     }
   }

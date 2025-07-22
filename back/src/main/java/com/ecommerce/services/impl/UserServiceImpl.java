@@ -1,6 +1,5 @@
 package com.ecommerce.services.impl;
 
-
 import com.ecommerce.model.entities.Address;
 import com.ecommerce.model.entities.User;
 import com.ecommerce.providers.JWTProvider;
@@ -11,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 
 @Service
 @RequiredArgsConstructor
@@ -25,7 +23,6 @@ public class UserServiceImpl implements UserService {
   @Override
   @Transactional
   public User findUserByJwtToken(String token) throws Exception {
-
     String email = jwtProvider.getEmailFromJwtToken(token);
     User user = this.findUserByEmail(email);
 
@@ -36,14 +33,8 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public User findUserByEmail(String email) throws Exception {
-
-    User user = userRepository.findByEmail(email);
-
-    if (user == null) {
-      throw new Exception("user not found with this email: " + email);
-    }
-
-    return user;
+    return userRepository.findByEmail(email)
+      .orElseThrow(() -> new Exception("user not found with this email: " + email));
   }
 
   @Override
@@ -70,7 +61,6 @@ public class UserServiceImpl implements UserService {
     Address existingAddress = addressRepository.findById(addressId)
       .orElseThrow(() -> new Exception("Address not found with id: " + addressId));
 
-    // Verifica se o endereço pertence ao usuário
     if (!user.getAddresses().contains(existingAddress)) {
       throw new Exception("Address does not belong to the user.");
     }
@@ -93,7 +83,6 @@ public class UserServiceImpl implements UserService {
     Address address = addressRepository.findById(addressId)
       .orElseThrow(() -> new Exception("Address not found with id: " + addressId));
 
-    // Remove a associação e depois deleta o endereço
     user.getAddresses().remove(address);
     userRepository.save(user);
     addressRepository.delete(address);
@@ -110,7 +99,6 @@ public class UserServiceImpl implements UserService {
     if (reqUser.getEmail() != null) {
       user.setEmail(reqUser.getEmail());
     }
-    // Apenas atualiza a senha se uma nova for fornecida
     if (reqUser.getPassword() != null && !reqUser.getPassword().isEmpty()) {
       user.setPassword(passwordEncoder.encode(reqUser.getPassword()));
     }

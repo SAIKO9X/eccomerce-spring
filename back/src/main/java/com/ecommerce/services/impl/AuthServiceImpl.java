@@ -59,7 +59,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     if (role != null && role.equals(USER_ROLE.ROLE_SELLER)) {
-      if (sellerRepository.findByEmail(email) == null) {
+      if (sellerRepository.findByEmail(email).isEmpty()) {
         throw new Exception("Seller not found with email: " + email);
       }
     }
@@ -89,9 +89,9 @@ public class AuthServiceImpl implements AuthService {
       throw new Exception("Invalid or expired OTP.");
     }
 
-    User user = userRepository.findByEmail(request.email());
+    Optional<User> optionalUser = userRepository.findByEmail(request.email());
 
-    if (user == null) {
+    if (optionalUser.isEmpty()) {
       User createdUser = new User();
       createdUser.setEmail(request.email());
       createdUser.setFullName(request.fullName());
@@ -99,10 +99,10 @@ public class AuthServiceImpl implements AuthService {
       createdUser.setMobile("");
       createdUser.setPassword(passwordEncoder.encode(request.otp()));
 
-      user = userRepository.save(createdUser);
+      User savedUser = userRepository.save(createdUser);
 
       Cart cart = new Cart();
-      cart.setUser(user);
+      cart.setUser(savedUser);
       cartRepository.save(cart);
     }
 
@@ -140,9 +140,11 @@ public class AuthServiceImpl implements AuthService {
     if (userDetails == null) {
       throw new BadCredentialsException("Email ou senha inválidos");
     }
+
     if (!passwordEncoder.matches(password, userDetails.getPassword())) {
       throw new BadCredentialsException("Email ou senha inválidos");
     }
+    
     return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
   }
 
