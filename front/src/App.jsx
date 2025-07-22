@@ -109,9 +109,26 @@ export const App = () => {
     location.pathname.startsWith("/seller") ||
     location.pathname.startsWith("/admin");
 
+  const pathsToHideNavbar = [
+    "/login",
+    "/become-seller",
+    "/verify-seller-email",
+  ];
+
+  const isAdminOrSellerPath =
+    location.pathname.startsWith("/admin") ||
+    location.pathname.startsWith("/seller");
+
+  const isHomePage = location.pathname === "/";
+
+  const showNavbar =
+    !pathsToHideNavbar.includes(location.pathname) &&
+    !isAdminOrSellerPath &&
+    !isHomePage;
+
   return (
     <ThemeProvider theme={customerTheme}>
-      {!hideNavbar && location.pathname !== "/" && <Navbar />}
+      {showNavbar && <Navbar />}
       <div className="overflow-hidden">
         <Routes>
           <Route path="/" element={<HomePage />} />
