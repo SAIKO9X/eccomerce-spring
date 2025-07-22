@@ -24,6 +24,7 @@ import { useAppDispatch, useAppSelector } from "../../state/store";
 import { getReviewsByProductId } from "../../state/customer/reviewSlice";
 import { ReviewList } from "../components/details/ReviewList";
 import { ReviewForm } from "../components/details/ReviewForm";
+import { LoginPromptDialog } from "../components/auth/LoginPromptDialog";
 
 export const DetailsPage = () => {
   const dispatch = useAppDispatch();
@@ -36,7 +37,9 @@ export const DetailsPage = () => {
   const [selectedColor, setSelectedColor] = useState("");
   const [selectedSize, setSelectedSize] = useState("");
   const [activeImage, setActiveImage] = useState(0);
+  const { auth } = useAppSelector((store) => store);
   const { showAlert, AlertComponent } = useAlert();
+  const [openLoginDialog, setOpenLoginDialog] = useState(false);
 
   useEffect(() => {
     dispatch(getProductById(Number(productId)));
@@ -45,6 +48,10 @@ export const DetailsPage = () => {
   }, [dispatch, productId]);
 
   const handleWishlist = () => {
+    if (!auth.user) {
+      setOpenLoginDialog(true);
+      return;
+    }
     dispatch(addToWishList(productId));
   };
 
@@ -53,6 +60,11 @@ export const DetailsPage = () => {
   };
 
   const handleBuyNow = () => {
+    if (!auth.user) {
+      setOpenLoginDialog(true);
+      return;
+    }
+
     if (!selectedColor || !selectedSize) {
       showAlert("Selecione cor e tamanho antes de comprar!", "info");
       return;
@@ -75,6 +87,11 @@ export const DetailsPage = () => {
   };
 
   const handleAddToCart = () => {
+    if (!auth.user) {
+      setOpenLoginDialog(true);
+      return;
+    }
+
     if (!selectedColor || !selectedSize) {
       showAlert(
         "Selecione cor e tamanho antes de adicionar ao carrinho!",
@@ -112,6 +129,11 @@ export const DetailsPage = () => {
 
   return (
     <section className="px-5 xl:px-20 pt-10">
+      <LoginPromptDialog
+        open={openLoginDialog}
+        handleClose={() => setOpenLoginDialog(false)}
+      />
+
       {AlertComponent()}
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-10">
