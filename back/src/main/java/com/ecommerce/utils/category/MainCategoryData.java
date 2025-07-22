@@ -56,6 +56,7 @@ public class MainCategoryData {
         new CategoryLevelTwo("Televisores", "electronics_tvs", "electronics", 2),
         new CategoryLevelTwo("Smartphones", "electronics_phones", "electronics", 2),
         new CategoryLevelTwo("Laptops", "electronics_laptops", "electronics", 2),
+        new CategoryLevelTwo("Tablets", "electronics_tablets", "electronics", 2),
         new CategoryLevelTwo("Áudio", "electronics_audio", "electronics", 2),
         new CategoryLevelTwo("Vestíveis", "electronics_wearables", "electronics", 2)
       }
@@ -66,6 +67,7 @@ public class MainCategoryData {
     new CategoryLevelTwo("Televisores", "electronics_tvs", "electronics", 2),
     new CategoryLevelTwo("Smartphones", "electronics_phones", "electronics", 2),
     new CategoryLevelTwo("Laptops", "electronics_laptops", "electronics", 2),
+    new CategoryLevelTwo("Tablets", "electronics_tablets", "electronics", 2),
     new CategoryLevelTwo("Áudio", "electronics_audio", "electronics", 2),
     new CategoryLevelTwo("Vestíveis", "electronics_wearables", "electronics", 2)
   };
@@ -104,6 +106,8 @@ public class MainCategoryData {
     new CategoryLevelThree("Caixas de Som", "electronics_audio_speakers", "electronics_audio", "Áudio"),
     new CategoryLevelThree("Relógios Inteligentes", "electronics_wearables_smartwatches", "electronics_wearables", "Vestíveis"),
     new CategoryLevelThree("Óculos VR", "electronics_wearables_vrglasses", "electronics_wearables", "Vestíveis"),
+    new CategoryLevelThree("iPads", "electronics_tablets_ipad", "electronics_tablets", "Tablets"),
+    new CategoryLevelThree("Tablets Android", "electronics_tablets_android", "electronics_tablets", "Tablets"),
   };
 
   public static CategoryLevelThree[] furnitureLevelThree = {
