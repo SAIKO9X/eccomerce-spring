@@ -18,6 +18,7 @@ lerna-debug.log*
 /front/dist
 /front/dist-ssr
 /front/.env.local
+node_modules/
 
 # Backend (Java / Maven)
 /back/target/
