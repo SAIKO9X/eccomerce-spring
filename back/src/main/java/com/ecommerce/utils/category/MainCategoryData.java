@@ -57,6 +57,7 @@ public class MainCategoryData {
         new CategoryLevelTwo("Smartphones", "electronics_phones", "electronics", 2),
         new CategoryLevelTwo("Laptops", "electronics_laptops", "electronics", 2),
         new CategoryLevelTwo("Áudio", "electronics_audio", "electronics", 2),
+        new CategoryLevelTwo("Vestíveis", "electronics_wearables", "electronics", 2)
       }
     ),
   };
@@ -66,6 +67,7 @@ public class MainCategoryData {
     new CategoryLevelTwo("Smartphones", "electronics_phones", "electronics", 2),
     new CategoryLevelTwo("Laptops", "electronics_laptops", "electronics", 2),
     new CategoryLevelTwo("Áudio", "electronics_audio", "electronics", 2),
+    new CategoryLevelTwo("Vestíveis", "electronics_wearables", "electronics", 2)
   };
 
   public static CategoryLevelTwo[] furnitureLevelTwo = {
