@@ -12,18 +12,19 @@ export const RegisterForm = () => {
 
   const validationSchema = Yup.object({
     email: Yup.string().email("Email inválido").required("Email é obrigatório"),
-    otp: Yup.string().when("otpSent", {
+    otp: Yup.string().when([], {
       is: () => auth.otpSent,
-      then: Yup.string().required("Código OTP é obrigatório"),
+      then: (schema) => schema.required("Código OTP é obrigatório"),
+      otherwise: (schema) => schema.notRequired(),
     }),
-    name: Yup.string().required("Nome é obrigatório"),
+    fullName: Yup.string().required("Nome é obrigatório"),
   });
 
   const formik = useFormik({
     initialValues: {
       email: "",
       otp: "",
-      name: "",
+      fullName: "",
     },
     validationSchema,
     onSubmit: async (values) => {
@@ -34,18 +35,24 @@ export const RegisterForm = () => {
         }
       } catch (error) {
         console.error("Erro ao registrar:", error);
-        alert("Erro ao criar conta. Tente novamente.");
+        const errorMessage =
+          error.message || "Erro ao criar conta. Tente novamente.";
+        alert(errorMessage);  
       }
     },
   });
 
   const handleSentOtp = () => {
-    dispatch(
-      sendLoginRegisterOtp({
-        email: formik.values.email,
-        role: "ROLE_CUSTOMER", // Define o papel como cliente
-      })
-    );
+    formik.validateField("email").then((error) => {
+      if (!error) {
+        dispatch(
+          sendLoginRegisterOtp({
+            email: formik.values.email,
+            role: "ROLE_CUSTOMER",
+          })
+        );
+      }
+    });
   };
 
   return (
@@ -68,8 +75,8 @@ export const RegisterForm = () => {
         />
 
         {auth.otpSent && (
-          <div className="flex flex-col gap-2">
-            <div>
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4">
               <p className="text-xs text-gray-500 font-medium">
                 Digite o código de verificação enviado para seu email.
               </p>
@@ -89,13 +96,13 @@ export const RegisterForm = () => {
             <TextField
               fullWidth
               size="small"
-              name="name"
+              name="fullName"
               label="Digite seu nome"
-              value={formik.values.name}
+              value={formik.values.fullName}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              error={formik.touched.name && Boolean(formik.errors.name)}
-              helperText={formik.touched.name && formik.errors.name}
+              error={formik.touched.fullName && Boolean(formik.errors.fullName)}
+              helperText={formik.touched.fullName && formik.errors.fullName}
             />
           </div>
         )}
