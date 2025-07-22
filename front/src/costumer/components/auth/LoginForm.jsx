@@ -5,6 +5,7 @@ import { login, sendLoginRegisterOtp } from "../../../state/authSlice";
 import { useAppDispatch, useAppSelector } from "../../../state/store";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { useAlert } from "../../../utils/useAlert";
 
 const ADMIN_EMAIL = import.meta.env.VITE_ADMIN_EMAIL;
 export const LoginForm = () => {
@@ -12,6 +13,7 @@ export const LoginForm = () => {
   const navigate = useNavigate();
   const { auth } = useAppSelector((store) => store);
   const [isAdminLogin, setIsAdminLogin] = useState(false);
+  const { showAlert, AlertComponent } = useAlert();
 
   const validationSchema = Yup.object({
     email: Yup.string().email("Email inválido").required("Email é obrigatório"),
@@ -47,11 +49,22 @@ export const LoginForm = () => {
         email: formik.values.email,
         role: "ROLE_CUSTOMER",
       })
-    );
+    )
+      .unwrap()
+      .then(() => {
+        showAlert("Código de verificação enviado!", "success");
+      })
+      .catch((error) => {
+        const errorMessage =
+          error.message || "E-mail não encontrado ou inválido.";
+        showAlert(errorMessage, "error");
+      });
   };
 
   return (
     <div className="space-y-4 mb-4">
+      {AlertComponent()}
+
       <h1 className="text-center text-2xl font-semibold font-playfair uppercase">
         login
       </h1>

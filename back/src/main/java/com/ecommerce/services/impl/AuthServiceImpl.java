@@ -45,7 +45,6 @@ public class AuthServiceImpl implements AuthService {
   private final EmailService emailService;
   private final CustomUserServiceImpl customerUserService;
   private final ValidationService validationService;
-  private final CustomUserServiceImpl customUserService;
 
   @Value("${admin.email}")
   private String adminEmail;
@@ -53,29 +52,31 @@ public class AuthServiceImpl implements AuthService {
   @Override
   public void sentLoginOtp(String email, USER_ROLE role) throws Exception {
     String LOGIN_PREFIX = "login_";
+    String finalEmail = email;
 
-    if (email.startsWith(LOGIN_PREFIX)) {
-      email = email.substring(LOGIN_PREFIX.length());
+    if (finalEmail.startsWith(LOGIN_PREFIX)) {
+      finalEmail = finalEmail.substring(LOGIN_PREFIX.length());
     }
 
+    String emailForCheck = finalEmail;
     if (role != null && role.equals(USER_ROLE.ROLE_SELLER)) {
-      if (sellerRepository.findByEmail(email).isEmpty()) {
-        throw new Exception("Seller not found with email: " + email);
-      }
+      sellerRepository.findByEmail(emailForCheck)
+        .orElseThrow(() -> new Exception("Vendedor não encontrado com o e-mail: " + emailForCheck));
+    } else {
+      userRepository.findByEmail(emailForCheck)
+        .orElseThrow(() -> new Exception("Usuário não encontrado com este e-mail."));
     }
 
     String otp = OtpUtil.generateOtp();
-
-    Optional<VerificationCode> existingCode = verificationCodeRepository.findFirstByEmailOrderByExpiryDateDesc(email);
+    Optional<VerificationCode> existingCode = verificationCodeRepository.findFirstByEmailOrderByExpiryDateDesc(emailForCheck);
 
     VerificationCode verificationCode = existingCode.orElse(new VerificationCode());
     verificationCode.setOtp(otp);
-    verificationCode.setEmail(email);
+    verificationCode.setEmail(emailForCheck);
     verificationCode.setExpiryDate(LocalDateTime.now().plusMinutes(60));
 
     verificationCodeRepository.save(verificationCode);
-
-    emailService.sendOtpEmailWithTemplate(email, otp);
+    emailService.sendOtpEmailWithTemplate(emailForCheck, otp);
   }
 
   @Override
@@ -135,7 +136,7 @@ public class AuthServiceImpl implements AuthService {
   }
 
   private Authentication authenticateAdmin(String username, String password) {
-    UserDetails userDetails = customUserService.loadUserByUsername(username);
+    UserDetails userDetails = customerUserService.loadUserByUsername(username);
 
     if (userDetails == null) {
       throw new BadCredentialsException("Email ou senha inválidos");
@@ -144,7 +145,7 @@ public class AuthServiceImpl implements AuthService {
     if (!passwordEncoder.matches(password, userDetails.getPassword())) {
       throw new BadCredentialsException("Email ou senha inválidos");
     }
-    
+
     return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
   }
 
