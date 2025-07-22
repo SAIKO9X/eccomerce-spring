@@ -105,10 +105,6 @@ export const App = () => {
     }
   }, [auth.isLoggedIn, auth.role, seller.profile, navigate, location.pathname]);
 
-  const hideNavbar =
-    location.pathname.startsWith("/seller") ||
-    location.pathname.startsWith("/admin");
-
   const pathsToHideNavbar = [
     "/login",
     "/become-seller",
