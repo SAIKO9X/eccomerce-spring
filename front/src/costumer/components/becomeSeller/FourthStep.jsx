@@ -1,6 +1,7 @@
 import { TextField } from "@mui/material";
+import { Controller } from "react-hook-form";
 
-export const FourthStep = ({ formik }) => {
+export const FourthStep = ({ control, errors }) => {
   return (
     <div>
       <p className="text-lg font-playfair font-medium text-center pb-6">
@@ -8,66 +9,57 @@ export const FourthStep = ({ formik }) => {
       </p>
 
       <div className="flex flex-col gap-4">
-        <TextField
-          fullWidth
-          name="businessDetails.businessEmail"
-          label="Email da Empresa"
-          value={formik.values.businessDetails.businessEmail}
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          error={
-            formik.touched.businessDetails?.businessEmail &&
-            Boolean(formik.errors.businessDetails.businessEmail)
-          }
-          helperText={
-            formik.touched.businessDetails?.businessEmail &&
-            formik.errors.businessDetails.businessEmail
-          }
+        <Controller
+          name="sellerName"
+          control={control}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              fullWidth
+              label="Seu Nome de Vendedor"
+              error={!!errors.sellerName}
+              helperText={errors.sellerName?.message}
+            />
+          )}
         />
-
-        <TextField
-          fullWidth
-          name="password"
-          label="Senha"
-          value={formik.values.password}
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          error={formik.touched?.password && Boolean(formik.errors.password)}
-          helperText={formik.touched?.password && formik.errors.password}
-        />
-
-        <TextField
-          fullWidth
+        <Controller
           name="businessDetails.businessName"
-          label="Nome da Empresa"
-          value={formik.values.businessDetails.businessName}
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          error={
-            formik.touched.businessDetails?.businessName &&
-            Boolean(formik.errors.businessDetails.businessName)
-          }
-          helperText={
-            formik.touched.businessDetails?.businessName &&
-            formik.errors.businessDetails.businessName
-          }
+          control={control}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              fullWidth
+              label="Nome da Empresa"
+              error={!!errors.businessDetails?.businessName}
+              helperText={errors.businessDetails?.businessName?.message}
+            />
+          )}
         />
-
-        <TextField
-          fullWidth
+        <Controller
+          name="businessDetails.businessEmail"
+          control={control}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              fullWidth
+              label="Email da Empresa"
+              error={!!errors.businessDetails?.businessEmail}
+              helperText={errors.businessDetails?.businessEmail?.message}
+            />
+          )}
+        />
+        <Controller
           name="businessDetails.businessPhone"
-          label="Telefone da Empresa"
-          value={formik.values.businessDetails.businessPhone}
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          error={
-            formik.touched.businessDetails?.businessPhone &&
-            Boolean(formik.errors.businessDetails.businessPhone)
-          }
-          helperText={
-            formik.touched.businessDetails?.businessPhone &&
-            formik.errors.businessDetails.businessPhone
-          }
+          control={control}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              fullWidth
+              label="Telefone da Empresa"
+              error={!!errors.businessDetails?.businessPhone}
+              helperText={errors.businessDetails?.businessPhone?.message}
+            />
+          )}
         />
       </div>
     </div>

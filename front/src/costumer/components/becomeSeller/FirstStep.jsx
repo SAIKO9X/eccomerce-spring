@@ -1,6 +1,7 @@
 import { TextField } from "@mui/material";
+import { Controller } from "react-hook-form";
 
-export const FirstStep = ({ formik }) => {
+export const FirstStep = ({ control, errors }) => {
   return (
     <div>
       <p className="text-lg font-playfair font-medium text-center pb-6">
@@ -8,26 +9,31 @@ export const FirstStep = ({ formik }) => {
       </p>
 
       <div className="flex flex-col gap-4">
-        <TextField
-          fullWidth
+        <Controller
           name="mobile"
-          label="Número Celular"
-          value={formik.values.mobile}
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          error={formik.touched.mobile && Boolean(formik.errors.mobile)}
-          helperText={formik.touched.mobile && formik.errors.mobile}
+          control={control}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              fullWidth
+              label="Número Celular"
+              error={!!errors.mobile}
+              helperText={errors.mobile?.message}
+            />
+          )}
         />
-
-        <TextField
-          fullWidth
+        <Controller
           name="cnpj"
-          label="CNPJ"
-          value={formik.values.cnpj}
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          error={formik.touched.cnpj && Boolean(formik.errors.cnpj)}
-          helperText={formik.touched.cnpj && formik.errors.cnpj}
+          control={control}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              fullWidth
+              label="CNPJ"
+              error={!!errors.cnpj}
+              helperText={errors.cnpj?.message}
+            />
+          )}
         />
       </div>
     </div>
