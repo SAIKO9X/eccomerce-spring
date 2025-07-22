@@ -44,7 +44,6 @@ public class DataSeeder implements CommandLineRunner {
     Seller seller = new Seller();
     seller.setSellerName("Apple Store Oficial");
     seller.setEmail("apple_store@example.com");
-    seller.setPassword(passwordEncoder.encode("password123"));
     seller.setCNPJ("12345678000195");
     seller.setMobile("11987654321");
     seller.setEmailVerified(true);
