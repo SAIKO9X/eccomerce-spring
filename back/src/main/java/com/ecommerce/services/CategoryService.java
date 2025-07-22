@@ -15,4 +15,6 @@ public interface CategoryService {
   void deleteCategory(Long id) throws Exception;
 
   List<Category> seedInitialCategories();
+
+  List<String> getCategoryAndDescendantIds(String categoryId);
 }

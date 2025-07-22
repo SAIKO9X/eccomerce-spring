@@ -7,6 +7,7 @@ import com.ecommerce.model.entities.Seller;
 import com.ecommerce.repositories.CategoryRepository;
 import com.ecommerce.repositories.ProductRepository;
 import com.ecommerce.request.CreateProductRequest;
+import com.ecommerce.services.CategoryService;
 import com.ecommerce.services.ProductService;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
@@ -31,6 +32,7 @@ public class ProductServiceImpl implements ProductService {
 
   private final ProductRepository productRepository;
   private final CategoryRepository categoryRepository;
+  private final CategoryService categoryService;
 
   @Override
   public Product createProduct(CreateProductRequest request, Seller seller) throws ProductException {
@@ -114,7 +116,6 @@ public class ProductServiceImpl implements ProductService {
       .orElseThrow(() -> new ProductException("product not found with id: " + productId));
   }
 
-
   @Override
   public List<Product> searchProducts(String query) {
     return productRepository.searchProduct(query);
@@ -130,9 +131,15 @@ public class ProductServiceImpl implements ProductService {
     Specification<Product> spec = (root, query, criteriaBuilder) -> {
       List<Predicate> predicates = new ArrayList<>();
 
-      if (category != null) {
-        Join<Product, Category> categoryJoin = root.join("category");
-        predicates.add(criteriaBuilder.equal(categoryJoin.get("categoryId"), category));
+      if (category != null && !category.isEmpty()) {
+        List<String> categoryIds = categoryService.getCategoryAndDescendantIds(category);
+
+        if (!categoryIds.isEmpty()) {
+          Join<Product, Category> categoryJoin = root.join("category");
+          predicates.add(categoryJoin.get("categoryId").in(categoryIds));
+        } else {
+          return criteriaBuilder.disjunction();
+        }
       }
 
       if (colors != null && !colors.isEmpty()) {

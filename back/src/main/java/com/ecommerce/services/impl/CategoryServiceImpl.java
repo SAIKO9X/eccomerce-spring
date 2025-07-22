@@ -184,7 +184,25 @@ public class CategoryServiceImpl implements CategoryService {
         seededCategories.add(categoryRepository.save(category));
       }
     }
-    
+
     return seededCategories;
+  }
+
+  @Override
+  public List<String> getCategoryAndDescendantIds(String categoryId) {
+    List<String> categoryIds = new ArrayList<>();
+    categoryRepository.findByCategoryId(categoryId).ifPresent(parent -> {
+      categoryIds.add(parent.getCategoryId());
+      findDescendantIdsRecursive(parent, categoryIds);
+    });
+    return categoryIds;
+  }
+
+  private void findDescendantIdsRecursive(Category parent, List<String> categoryIds) {
+    List<Category> children = categoryRepository.findByParentCategoryId(parent.getId());
+    for (Category child : children) {
+      categoryIds.add(child.getCategoryId());
+      findDescendantIdsRecursive(child, categoryIds);
+    }
   }
 }
