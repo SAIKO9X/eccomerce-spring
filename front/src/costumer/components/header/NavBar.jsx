@@ -42,11 +42,16 @@ export const Navbar = () => {
 
   useEffect(() => {
     dispatch(fetchCategories());
-    const jwt = localStorage.getItem("jwt");
-    if (jwt) {
-      dispatch(findUserCart(jwt));
-    }
   }, [dispatch]);
+
+  useEffect(() => {
+    if (auth.user) {
+      const jwt = localStorage.getItem("jwt");
+      if (jwt) {
+        dispatch(findUserCart(jwt));
+      }
+    }
+  }, [auth.user, dispatch]);
 
   useEffect(() => {
     if (isSearchVisible && searchInputRef.current) {
