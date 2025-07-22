@@ -57,5 +57,7 @@ public class Product {
   private List<String> colors = new ArrayList<>();
 
   @ElementCollection
+  @Column(name = "images", length = 1000)
+  @CollectionTable(name = "product_images", joinColumns = @JoinColumn(name = "product_id"))
   private List<String> images = new ArrayList<>();
 }
