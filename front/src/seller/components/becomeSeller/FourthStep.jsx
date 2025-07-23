@@ -55,6 +55,7 @@ export const FourthStep = ({ control, errors }) => {
             <TextField
               {...field}
               fullWidth
+              disabled
               label="Telefone da Empresa"
               error={!!errors.businessDetails?.businessPhone}
               helperText={errors.businessDetails?.businessPhone?.message}

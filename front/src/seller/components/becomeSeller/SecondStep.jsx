@@ -32,6 +32,7 @@ export const SecondStep = ({ control, errors }) => {
             render={({ field }) => (
               <TextField
                 {...field}
+                disabled
                 fullWidth
                 label="Telefone do Destinatário"
                 onChange={(e) => field.onChange(maskMobile(e.target.value))}
