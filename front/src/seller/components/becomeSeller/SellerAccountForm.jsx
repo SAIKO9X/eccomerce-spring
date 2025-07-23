@@ -1,5 +1,5 @@
 import { Stepper, Step, StepLabel, Button } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FirstStep } from "./FirstStep";
 import { SecondStep } from "./SecondStep";
 import { ThirdStep } from "./ThirdStep";
@@ -52,6 +52,8 @@ export const SellerAccountForm = () => {
     handleSubmit,
     formState: { errors },
     trigger,
+    watch,
+    setValue,
   } = useForm({
     resolver: zodResolver(sellerAccountSchema),
     mode: "onBlur",
@@ -85,17 +87,22 @@ export const SellerAccountForm = () => {
     },
   });
 
+  const mainMobile = watch("mobile");
+
+  useEffect(() => {
+    if (mainMobile) {
+      setValue("pickupAddress.mobile", mainMobile, { shouldValidate: true });
+      setValue("businessDetails.businessPhone", mainMobile, {
+        shouldValidate: true,
+      });
+    }
+  }, [mainMobile, setValue]);
+
   const handleNext = async () => {
-    // Valida apenas os campos do passo atual
     const isStepValid = await trigger(stepFields[activeStep]);
 
-    if (isStepValid) {
-      if (activeStep < steps.length - 1) {
-        setActiveStep((prevActiveStep) => prevActiveStep + 1);
-      } else {
-        // Se for o último passo, o botão agora será de submissão
-        // A lógica de submissão será tratada pelo handleSubmit
-      }
+    if (isStepValid && activeStep < steps.length - 1) {
+      setActiveStep((prevActiveStep) => prevActiveStep + 1);
     }
   };
 
