@@ -1,5 +1,6 @@
 import { Grid2, TextField } from "@mui/material";
 import { Controller } from "react-hook-form";
+import { maskCEP, maskMobile } from "../../../utils/masks";
 
 export const SecondStep = ({ control, errors }) => {
   return (
@@ -32,7 +33,8 @@ export const SecondStep = ({ control, errors }) => {
               <TextField
                 {...field}
                 fullWidth
-                label="Número Celular"
+                label="Telefone do Destinatário"
+                onChange={(e) => field.onChange(maskMobile(e.target.value))}
                 error={!!errors.pickupAddress?.mobile}
                 helperText={errors.pickupAddress?.mobile?.message}
               />
@@ -48,6 +50,7 @@ export const SecondStep = ({ control, errors }) => {
                 {...field}
                 fullWidth
                 label="Código Postal"
+                onChange={(e) => field.onChange(maskCEP(e.target.value))}
                 error={!!errors.pickupAddress?.cep}
                 helperText={errors.pickupAddress?.cep?.message}
               />

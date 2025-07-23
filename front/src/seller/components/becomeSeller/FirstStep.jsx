@@ -1,5 +1,6 @@
 import { TextField } from "@mui/material";
 import { Controller } from "react-hook-form";
+import { maskMobile, maskCNPJ } from "../../../utils/masks";
 
 export const FirstStep = ({ control, errors }) => {
   return (
@@ -17,6 +18,7 @@ export const FirstStep = ({ control, errors }) => {
               {...field}
               fullWidth
               label="Número Celular"
+              onChange={(e) => field.onChange(maskMobile(e.target.value))}
               error={!!errors.mobile}
               helperText={errors.mobile?.message}
             />
@@ -30,6 +32,7 @@ export const FirstStep = ({ control, errors }) => {
               {...field}
               fullWidth
               label="CNPJ"
+              onChange={(e) => field.onChange(maskCNPJ(e.target.value))}
               error={!!errors.cnpj}
               helperText={errors.cnpj?.message}
             />

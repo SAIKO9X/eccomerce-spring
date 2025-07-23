@@ -52,7 +52,7 @@ export const BecomeSellerPage = () => {
           <img
             className="rounded-md"
             src="https://pictures.autods.com/OfficialSite/New/20231030162905/online-seller.png"
-            alt=""
+            alt="Seller Image"
           />
         </div>
       </div>

@@ -8,7 +8,6 @@ import { ProductPage } from "./costumer/pages/ProductPage";
 import { ProfilePage } from "./costumer/pages/ProfilePage";
 import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import { HomePage } from "./costumer/pages/HomePage";
-import { BecomeSellerPage } from "./costumer/pages/BecomeSellerPage";
 import { SellerDashboard } from "./seller/pages/SellerDashboard";
 import { AdminDashboard } from "./admin/pages/AdminDashboard";
 import { useEffect, useRef } from "react";
@@ -22,7 +21,9 @@ import { createHomeCategories } from "./state/customer/customerSlice";
 import { CategoriesList } from "./costumer/components/categories/CategoryList";
 import { CreateReviewPage } from "./costumer/components/footer/CreateReviewPage";
 import { SearchResultsPage } from "./costumer/components/products/SearchResultsPage";
-import { VerifySellerEmailPage } from "./costumer/components/becomeSeller/VerifySellerEmailPage";
+import { BecomeSellerPage } from "./seller/pages/BecomeSellerPage";
+import { VerifySellerEmailPage } from "./seller/components/becomeSeller/VerifySellerEmailPage";
+
 import { useAppDispatch, useAppSelector } from "./state/store";
 
 export const App = () => {
