@@ -1,3 +1,5 @@
+// front/src/seller/components/becomeSeller/sellerSchema.js
+
 import { z } from "zod";
 
 // Regex para validar CNPJ (formato XX.XXX.XXX/XXXX-XX)
@@ -37,7 +39,11 @@ export const thirdStepSchema = z.object({
 export const fourthStepSchema = z.object({
   sellerName: z.string().min(1, "Nome do vendedor é obrigatório"),
   businessDetails: z.object({
-    businessEmail: z.string().email("Email da empresa inválido"),
+    businessEmail: z
+      .string()
+      .email("Email da empresa inválido")
+      .optional()
+      .or(z.literal("")),
     businessName: z.string().min(1, "Nome da empresa é obrigatório"),
     businessPhone: z
       .string()
