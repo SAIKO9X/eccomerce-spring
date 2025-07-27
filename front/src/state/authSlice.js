@@ -59,17 +59,11 @@ export const register = createAsyncThunk(
 
 export const getUserProfile = createAsyncThunk(
   "/users/profile",
-  async ({ jwt }, { rejectWithValue }) => {
+  async (_, { rejectWithValue }) => {
     try {
-      const response = await api.get("/users/profile", {
-        headers: {
-          Authorization: `Bearer ${jwt}`,
-        },
-      });
-      console.log("user profile", response.data);
+      const response = await api.get("/users/profile");
       return response.data;
     } catch (error) {
-      console.log("get user profile error", error);
       return rejectWithValue(error.response?.data || error.message);
     }
   }

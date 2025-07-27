@@ -109,6 +109,7 @@ export const App = () => {
   const pathsToHideNavbar = [
     "/login",
     "/become-seller",
+    "/become-seller/login",
     "/verify-seller-email",
   ];
 

@@ -1,6 +1,4 @@
 import axios from "axios";
-import { logout } from "../state/authSlice";
-import { store } from "../state/store";
 
 const API_BASE_URL = "http://localhost:8080";
 
@@ -8,7 +6,7 @@ export const api = axios.create({
   baseURL: API_BASE_URL,
 });
 
-// Adiciona um interceptor para todas as requisições
+// Interceptor de Requisição
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("jwt");
@@ -22,31 +20,32 @@ api.interceptors.request.use(
   }
 );
 
-// Adiciona um interceptor para todas as RESPOSTAS
+// Interceptor de Resposta
 api.interceptors.response.use(
   (response) => {
-    // Se a resposta for bem-sucedida, apenas a retorna
     return response;
   },
   (error) => {
-    // Verifica se o erro é de autenticação (token inválido, expirado ou usuário não encontrado)
     if (
       error.response &&
       (error.response.status === 401 || error.response.status === 403)
     ) {
-      console.log(
-        "Token inválido ou usuário não encontrado. Fazendo logout automático."
-      );
+      console.log("Sessão inválida ou expirada. Deslogando...");
 
-      // Remove o token inválido do localStorage
       localStorage.removeItem("jwt");
+      localStorage.removeItem("role");
 
-      // Despacha a ação de logout do Redux para limpar o estado
-      store.dispatch(logout());
+      const publicPaths = [
+        "/login",
+        "/register",
+        "/become-seller",
+        "/become-seller/login",
+      ];
+      if (!publicPaths.includes(window.location.pathname)) {
+        window.location.href = "/";
+      }
     }
 
     return Promise.reject(error);
   }
 );
-
-export default api;

@@ -39,7 +39,7 @@ export const SellerLoginForm = () => {
   };
 
   return (
-    <div>
+    <div className="flex flex-col justify-center h-full">
       <p className="text-lg font-playfair font-medium text-center pb-6">
         Faça Login como Vendedor
       </p>

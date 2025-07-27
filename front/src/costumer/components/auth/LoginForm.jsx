@@ -138,7 +138,7 @@ export const LoginForm = () => {
           variant="outlined"
           size="small"
           sx={{ py: 1.5 }}
-          onClick={() => navigate("/become-seller?tab=login")}
+          onClick={() => navigate("/become-seller/login")}
         >
           Fazer Login como Vendedor
         </Button>
