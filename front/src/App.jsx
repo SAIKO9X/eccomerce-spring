@@ -147,7 +147,7 @@ export const App = () => {
           />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
-          <Route path="/become-seller" element={<BecomeSellerPage />} />
+          <Route path="/become-seller/*" element={<BecomeSellerPage />} />
           <Route path="/account/*" element={<ProfilePage />} />
           <Route path="/seller/*" element={<SellerDashboard />} />
           <Route path="/admin/*" element={<AdminDashboard />} />

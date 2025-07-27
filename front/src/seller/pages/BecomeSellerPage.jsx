@@ -1,61 +1,55 @@
 import { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { SellerAccountForm } from "../components/becomeSeller/SellerAccountForm";
 import { SellerLoginForm } from "../components/becomeSeller/SellerLoginForm";
-import { Button } from "@mui/material";
-import { useSearchParams } from "react-router-dom";
 
 export const BecomeSellerPage = () => {
-  const [searchParams] = useSearchParams();
   const [isLogin, setIsLogin] = useState(false);
 
-  useEffect(() => {
-    const tab = searchParams.get("tab");
-    setIsLogin(tab === "login");
-  }, [searchParams]);
+  const location = useLocation();
+  const navigate = useNavigate();
 
-  const handleShowPage = () => {
-    setIsLogin(!isLogin);
+  useEffect(() => {
+    if (location.pathname === "/become-seller/login") {
+      setIsLogin(true);
+    } else {
+      setIsLogin(false);
+    }
+  }, [location.pathname]);
+
+  const togglePanel = () => {
+    const newPath = isLogin ? "/become-seller" : "/become-seller/login";
+    navigate(newPath);
   };
 
   return (
-    <section className="grid md:gap-10 grid-cols-3 min-h-screen">
-      <div className="lg:col-span-1 md:col-span-2 col-span-3 p-10 rounded-b-md shadow-md">
-        {!isLogin ? <SellerAccountForm /> : <SellerLoginForm />}
+    <div className="flex justify-center items-center h-screen">
+      <div className="relative w-full max-w-4xl mx-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 shadow-lg rounded-lg overflow-hidden">
+          <div className="p-8">
+            {isLogin ? <SellerLoginForm /> : <SellerAccountForm />}
 
-        <div className="mt-12">
-          {!isLogin ? (
-            <div className="flex flex-col items-center justify-center gap-2 uppercase">
-              Já tenho uma conta
-              <Button onClick={handleShowPage} variant="outlined">
-                fazer login
-              </Button>
+            <div className="mt-4 text-center">
+              <span
+                onClick={togglePanel}
+                className="text-indigo-600 hover:text-indigo-800 cursor-pointer font-medium"
+              >
+                {isLogin
+                  ? "Ainda não tem uma conta? Crie uma"
+                  : "Já tem uma conta? Faça Login"}
+              </span>
             </div>
-          ) : (
-            <div className="flex flex-col items-center justify-center gap-2 uppercase">
-              não tenho uma conta
-              <Button onClick={handleShowPage} variant="outlined">
-                criar conta
-              </Button>
-            </div>
-          )}
-        </div>
-      </div>
-      <div className="hidden md:col-span-1 lg:col-span-2 md:flex justify-center items-center">
-        <div className="lg:w-[70%] px-5 space-y-10">
-          <div className="space-y-2 text-center">
-            <p className="text-2xl font-playfair">
-              Entre na Revolução do Mercado
-            </p>
-            <p className="uppercase">Aumente suas Vendas</p>
           </div>
 
-          <img
-            className="rounded-md"
-            src="https://pictures.autods.com/OfficialSite/New/20231030162905/online-seller.png"
-            alt="Seller Image"
-          />
+          <div className="hidden lg:block bg-gray-200 p-8">
+            <h2 className="text-2xl font-bold text-center">Junte-se a Nós</h2>
+            <p className="text-center mt-2">
+              Venda os seus produtos na nossa plataforma e alcance mais
+              clientes.
+            </p>
+          </div>
         </div>
       </div>
-    </section>
+    </div>
   );
 };

@@ -4,23 +4,28 @@ import { sendLoginRegisterOtp } from "../../../state/authSlice";
 import { sellerLogin } from "../../../state/seller/sellerAuthSlice";
 import { useAppDispatch, useAppSelector } from "../../../state/store";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 export const SellerLoginForm = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const sellerState = useAppSelector((store) => store.seller);
   const { auth } = useAppSelector((store) => store);
+
+  useEffect(() => {
+    if (sellerState.seller) {
+      navigate("/seller");
+    }
+  }, [sellerState.seller, navigate]);
 
   const formik = useFormik({
     initialValues: {
       email: "",
       otp: "",
     },
-    onSubmit: async (values) => {
+    onSubmit: (values) => {
       console.log("become seller login", values);
-      const resultAction = await dispatch(sellerLogin(values));
-      if (sellerLogin.fulfilled.match(resultAction)) {
-        navigate("/seller");
-      }
+      dispatch(sellerLogin(values));
     },
   });
 
@@ -89,9 +94,9 @@ export const SellerLoginForm = () => {
             variant="contained"
             sx={{ py: 1.5 }}
             onClick={() => formik.handleSubmit()}
-            disabled={auth.loading}
+            disabled={auth.loading || sellerState.loading}
           >
-            {auth.loading ? (
+            {auth.loading || sellerState.loading ? (
               <CircularProgress color="secondary" size={24} />
             ) : (
               "Login"
