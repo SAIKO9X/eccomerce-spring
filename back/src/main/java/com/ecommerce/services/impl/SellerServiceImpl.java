@@ -92,6 +92,9 @@ public class SellerServiceImpl implements SellerService {
     if (seller.getCNPJ() != null) {
       existingSeller.setCNPJ(seller.getCNPJ());
     }
+    if (seller.getBusinessDetails() != null && seller.getBusinessDetails().getLogo() != null) {
+      existingSeller.getBusinessDetails().setLogo(seller.getBusinessDetails().getLogo());
+    }
     if (seller.getBusinessDetails() != null && seller.getBusinessDetails().getBusinessName() != null) {
       existingSeller.getBusinessDetails().setBusinessName(seller.getBusinessDetails().getBusinessName());
     }

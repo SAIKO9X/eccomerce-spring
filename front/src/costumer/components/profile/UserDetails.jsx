@@ -6,11 +6,14 @@ import {
   IconButton,
   Stack,
   Typography,
+  Avatar,
+  CircularProgress,
 } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../../../state/store";
 import { updateUserProfile } from "../../../state/authSlice";
 import { useAlert } from "../../../utils/useAlert";
 import { Edit } from "@mui/icons-material";
+import { uploadToCloudinary } from "../../../utils/uploadToCloudinary";
 
 export const UserDetails = () => {
   const dispatch = useAppDispatch();
@@ -18,9 +21,11 @@ export const UserDetails = () => {
   const { showAlert, AlertComponent } = useAlert();
 
   const [isEditing, setIsEditing] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const [formData, setFormData] = useState({
     fullName: "",
     mobile: "",
+    avatar: "",
   });
 
   useEffect(() => {
@@ -28,6 +33,7 @@ export const UserDetails = () => {
       setFormData({
         fullName: auth.user.fullName || "",
         mobile: auth.user.mobile || "",
+        avatar: auth.user.avatar || "",
       });
     }
   }, [auth.user]);
@@ -38,6 +44,23 @@ export const UserDetails = () => {
       ...prevData,
       [name]: value,
     }));
+  };
+
+  const handleImageUpload = async (e) => {
+    setIsUploading(true);
+    const file = e.target.files[0];
+    if (file) {
+      try {
+        const imageUrl = await uploadToCloudinary(file);
+        setFormData((prev) => ({ ...prev, avatar: imageUrl }));
+      } catch (error) {
+        showAlert("Erro ao fazer upload da imagem.", error);
+      } finally {
+        setIsUploading(false);
+      }
+    } else {
+      setIsUploading(false);
+    }
   };
 
   const handleSubmit = (e) => {
@@ -54,24 +77,11 @@ export const UserDetails = () => {
       });
   };
 
-  const handleCancel = () => {
-    if (auth.user) {
-      setFormData({
-        fullName: auth.user.fullName || "",
-        mobile: auth.user.mobile || "",
-      });
-    }
-    setIsEditing(false);
-  };
-
   return (
-    // 1. Contêiner principal usando Box para centralizar o conteúdo
     <Box sx={{ display: "flex", justifyContent: "center", py: 5 }}>
-      {/* 2. Stack para organizar todo o conteúdo e controlar o espaçamento e a largura */}
       <Stack spacing={2} sx={{ width: { xs: "90%", lg: "70%" } }}>
         <AlertComponent />
 
-        {/* Cabeçalho da seção */}
         <Box
           sx={{
             display: "flex",
@@ -93,23 +103,35 @@ export const UserDetails = () => {
           )}
         </Box>
 
+        <Box sx={{ display: "flex", justifyContent: "center", my: 2 }}>
+          <Avatar
+            src={formData.avatar}
+            sx={{ width: 100, height: 100, mb: 2 }}
+          />
+        </Box>
+
         {isEditing ? (
-          // 3. Formulário de edição
           <Box component="form" onSubmit={handleSubmit} sx={{ pt: 2 }}>
             <Stack spacing={3}>
+              <Button
+                variant="outlined"
+                component="label"
+                disabled={isUploading}
+              >
+                {isUploading ? <CircularProgress size={24} /> : "Alterar Foto"}
+                <input
+                  type="file"
+                  hidden
+                  onChange={handleImageUpload}
+                  accept="image/*"
+                />
+              </Button>
               <TextField
                 fullWidth
                 label="Nome Completo"
                 name="fullName"
                 value={formData.fullName}
                 onChange={handleChange}
-              />
-              <TextField
-                fullWidth
-                label="Email"
-                name="email"
-                value={auth.user?.email || ""}
-                disabled
               />
               <TextField
                 fullWidth
@@ -120,17 +142,16 @@ export const UserDetails = () => {
               />
               <Box sx={{ display: "flex", gap: 2, pt: 1 }}>
                 <Button type="submit" variant="contained" color="primary">
-                  Salvar Alterações
+                  Salvar
                 </Button>
-                <Button onClick={handleCancel} variant="outlined">
+                <Button onClick={() => setIsEditing(false)} variant="outlined">
                   Cancelar
                 </Button>
               </Box>
             </Stack>
           </Box>
         ) : (
-          // 4. Exibição dos dados do usuário
-          <Stack spacing={1.5} sx={{ pt: 2 }}>
+          <Stack spacing={1.5} sx={{ pt: 2, alignItems: "center" }}>
             <Typography>
               <strong>Nome:</strong> {auth.user?.fullName || "Não informado"}
             </Typography>

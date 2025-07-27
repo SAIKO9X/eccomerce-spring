@@ -39,6 +39,7 @@ public class User {
   private String email;
   private String fullName;
   private String mobile;
+  private String avatar;
 
   @Enumerated(EnumType.STRING)
   private USER_ROLE role = USER_ROLE.ROLE_CUSTOMER;

@@ -3,13 +3,16 @@ import * as Yup from "yup";
 import {
   Button,
   TextField,
-  Grid2, // Usando Grid2 consistentemente
+  Grid2,
   Typography,
   CircularProgress,
   Divider,
+  Avatar,
 } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../../../state/store";
 import { updateSellerProfile } from "../../../state/seller/sellerSlice";
+import { uploadToCloudinary } from "../../../utils/uploadToCloudinary";
+import { useState } from "react";
 
 // Schema de validação completo para todos os campos
 const validationSchema = Yup.object().shape({
@@ -43,6 +46,7 @@ const validationSchema = Yup.object().shape({
 export const EditSellerForm = ({ seller }) => {
   const dispatch = useAppDispatch();
   const { loading } = useAppSelector((state) => state.seller);
+  const [isUploading, setIsUploading] = useState(false);
 
   const formik = useFormik({
     initialValues: {
@@ -77,10 +81,47 @@ export const EditSellerForm = ({ seller }) => {
     },
   });
 
-  console.log(seller?.businessDetails, "lasanha");
+  const handleLogoUpload = async (e) => {
+    setIsUploading(true);
+    const file = e.target.files[0];
+    if (file) {
+      try {
+        const logoUrl = await uploadToCloudinary(file);
+        formik.setFieldValue("businessDetails.logo", logoUrl);
+      } catch (error) {
+        console.error("Erro no upload da logo:", error);
+      } finally {
+        setIsUploading(false);
+      }
+    }
+  };
 
   return (
     <form onSubmit={formik.handleSubmit}>
+      <Grid2
+        size={12}
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: 2,
+        }}
+      >
+        <Avatar
+          src={formik.values.businessDetails.logo}
+          sx={{ width: 100, height: 100 }}
+        />
+        <Button variant="outlined" component="label" disabled={isUploading}>
+          {isUploading ? <CircularProgress size={24} /> : "Alterar Logo"}
+          <input
+            type="file"
+            hidden
+            onChange={handleLogoUpload}
+            accept="image/*"
+          />
+        </Button>
+      </Grid2>
+
       <Grid2 container spacing={3}>
         {/* Informações da Loja */}
         <Grid2 size={12}>

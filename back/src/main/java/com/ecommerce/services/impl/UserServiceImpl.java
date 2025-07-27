@@ -50,6 +50,10 @@ public class UserServiceImpl implements UserService {
       user.setMobile(reqUser.getMobile());
     }
 
+    if (reqUser.getAvatar() != null) {
+      user.setAvatar(reqUser.getAvatar());
+    }
+
     return userRepository.save(user);
   }
 

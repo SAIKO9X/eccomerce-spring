@@ -1,4 +1,4 @@
-import { Divider } from "@mui/material";
+import { Avatar, Divider } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../state/store";
 import { logout } from "../state/authSlice";
@@ -19,22 +19,16 @@ export const DrawerList = ({ menu, menu2, profile, isAdmin = false }) => {
     : profile?.sellerName || "Vendedor";
   const profileEmail = profile?.email || "";
 
-  const profileImage = isAdmin ? profile?.logo : profile?.businessDetails?.logo;
+  const profileImage = isAdmin
+    ? null
+    : profile?.businessDetails?.logo || profile?.avatar;
 
   return (
     <div className="flex flex-col p-6 h-full">
       <div className="flex items-center gap-2 pb-5">
-        {profileImage ? (
-          <img
-            src={profileImage}
-            alt="Imagem de Perfil"
-            className="w-10 h-10 rounded-full object-cover"
-          />
-        ) : (
-          <AccountCircle
-            sx={{ width: 40, height: 40, color: "text.secondary" }}
-          />
-        )}
+        <Avatar src={profileImage} sx={{ width: 40, height: 40 }}>
+          {!profileImage && <AccountCircle sx={{ width: 40, height: 40 }} />}
+        </Avatar>
 
         <div className="flex flex-col justify-center text-sm min-w-0">
           <p className="font-playfair font-medium leading-none overflow-hidden text-ellipsis whitespace-nowrap">
