@@ -31,8 +31,8 @@ export const secondStepSchema = z.object({
 export const thirdStepSchema = z.object({
   bankDetails: z.object({
     accountNumber: z.string().min(1, "Número da conta é obrigatório"),
-    agencyNumber: z.string().min(1, "Número da agência é obrigatório"),
-    accountHolderName: z.string().min(1, "Nome do titular é obrigatório"),
+    ifscCode: z.string().min(1, "Número da agência é obrigatório"),
+    accountHoldName: z.string().min(1, "Nome do titular é obrigatório"),
   }),
 });
 
