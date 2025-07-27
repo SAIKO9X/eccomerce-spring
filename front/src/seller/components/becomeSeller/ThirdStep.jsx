@@ -1,3 +1,5 @@
+// front/src/seller/components/becomeSeller/ThirdStep.jsx
+
 import { TextField } from "@mui/material";
 import { Controller } from "react-hook-form";
 
@@ -16,35 +18,35 @@ export const ThirdStep = ({ control, errors }) => {
             <TextField
               {...field}
               fullWidth
-              label="Numero da Conta"
+              label="Número da Conta"
               error={!!errors.bankDetails?.accountNumber}
               helperText={errors.bankDetails?.accountNumber?.message}
             />
           )}
         />
         <Controller
-          name="bankDetails.agencyNumber"
+          name="bankDetails.ifscCode"
           control={control}
           render={({ field }) => (
             <TextField
               {...field}
               fullWidth
-              label="Número da Agência"
-              error={!!errors.bankDetails?.agencyNumber}
-              helperText={errors.bankDetails?.agencyNumber?.message}
+              label="Código do Banco (IFSC/Código)"
+              error={!!errors.bankDetails?.ifscCode}
+              helperText={errors.bankDetails?.ifscCode?.message}
             />
           )}
         />
         <Controller
-          name="bankDetails.accountHolderName"
+          name="bankDetails.accountHoldName"
           control={control}
           render={({ field }) => (
             <TextField
               {...field}
               fullWidth
               label="Nome do Titular da Conta"
-              error={!!errors.bankDetails?.accountHolderName}
-              helperText={errors.bankDetails?.accountHolderName?.message}
+              error={!!errors.bankDetails?.accountHoldName}
+              helperText={errors.bankDetails?.accountHoldName?.message}
             />
           )}
         />

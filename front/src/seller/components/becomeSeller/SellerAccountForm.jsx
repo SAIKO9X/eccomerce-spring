@@ -37,14 +37,14 @@ const stepFields = [
   ],
   [
     "bankDetails.accountNumber",
-    "bankDetails.agencyNumber",
-    "bankDetails.accountHolderName",
+    "bankDetails.ifscCode",
+    "bankDetails.accountHoldName",
   ],
   [
     "sellerName",
     "businessDetails.businessName",
     "businessDetails.businessEmail",
-    "businessDetails.businessPhone",
+    "businessDetails.businessMobile",
   ],
 ];
 
@@ -80,8 +80,8 @@ export const SellerAccountForm = () => {
       },
       bankDetails: {
         accountNumber: "",
-        agencyNumber: "",
-        accountHolderName: "",
+        ifscCode: "",
+        accountHoldName: "",
       },
       sellerName: "",
       businessDetails: {
@@ -89,8 +89,6 @@ export const SellerAccountForm = () => {
         businessEmail: "",
         businessPhone: "",
         logo: "",
-        banner: "",
-        businessAddress: "",
       },
     },
   });

@@ -54,7 +54,6 @@ export const EditSellerForm = ({ seller }) => {
         businessName: "",
         businessEmail: "",
         businessMobile: "",
-        businessAddress: "",
       },
       pickupAddress: seller?.pickupAddress || {
         recipient: "",
@@ -77,6 +76,8 @@ export const EditSellerForm = ({ seller }) => {
       dispatch(updateSellerProfile({ sellerData: values, jwt }));
     },
   });
+
+  console.log(seller?.businessDetails, "lasanha");
 
   return (
     <form onSubmit={formik.handleSubmit}>
@@ -181,22 +182,6 @@ export const EditSellerForm = ({ seller }) => {
             helperText={
               formik.touched.businessDetails?.businessMobile &&
               formik.errors.businessDetails?.businessMobile
-            }
-          />
-        </Grid2>
-        <Grid2 size={{ xs: 12, md: 6 }}>
-          <TextField
-            fullWidth
-            label="Endereço do Negócio"
-            name="businessDetails.businessAddress"
-            {...formik.getFieldProps("businessDetails.businessAddress")}
-            error={
-              formik.touched.businessDetails?.businessAddress &&
-              Boolean(formik.errors.businessDetails?.businessAddress)
-            }
-            helperText={
-              formik.touched.businessDetails?.businessAddress &&
-              formik.errors.businessDetails?.businessAddress
             }
           />
         </Grid2>
