@@ -130,6 +130,7 @@ public class SellerServiceImpl implements SellerService {
   public Seller verifyEmail(String email, String otp) throws Exception {
     Seller seller = getSellerByEmail(email);
     seller.setEmailVerified(true);
+    seller.setAccountStatus(AccountStatus.ACTIVE);
     return sellerRepository.save(seller);
   }
 

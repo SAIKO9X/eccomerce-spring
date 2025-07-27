@@ -88,15 +88,11 @@ public class SellerController {
 
     VerificationCode verificationCode = new VerificationCode();
     verificationCode.setOtp(otp);
-    verificationCode.setEmail(seller.getEmail());
-
+    verificationCode.setEmail(savedSeller.getEmail());
     verificationCode.setExpiryDate(LocalDateTime.now().plusHours(24));
     verificationCodeRepository.save(verificationCode);
 
-    String frontend_url = "http://localhost:5173//verify_seller";
-    String verificationLink = frontend_url + "?otp=" + otp;
-
-    emailService.sendSellerVerificationEmail(savedSeller.getEmail(), savedSeller.getSellerName(), verificationLink);
+    emailService.sendOtpEmailWithTemplate(savedSeller.getEmail(), otp);
 
     return new ResponseEntity<>(savedSeller, HttpStatus.CREATED);
   }
