@@ -3,6 +3,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useAppDispatch } from "../../../state/store";
 import { addAddress, getUserProfile } from "../../../state/authSlice";
+import { maskMobile, maskCEP } from "../../../utils/masks";
 
 const AddressFormSchema = Yup.object().shape({
   mobile: Yup.string()
@@ -41,6 +42,12 @@ export const AddressForm = ({ onClose }) => {
     },
   });
 
+  // Função para lidar com mudanças nos campos com máscara
+  const handleMaskedChange = (fieldName, maskFunction) => (event) => {
+    const maskedValue = maskFunction(event.target.value);
+    formik.setFieldValue(fieldName, maskedValue);
+  };
+
   return (
     <div className="max-h-auto">
       <p className="font-playfair font-medium pb-4">Detalhe dos Contatos</p>
@@ -78,10 +85,13 @@ export const AddressForm = ({ onClose }) => {
               name="mobile"
               label="Número Celular"
               value={formik.values.mobile}
-              onChange={formik.handleChange}
+              onChange={handleMaskedChange("mobile", maskMobile)}
               onBlur={formik.handleBlur}
               error={formik.touched.mobile && Boolean(formik.errors.mobile)}
               helperText={formik.touched.mobile && formik.errors.mobile}
+              inputProps={{
+                maxLength: 15, // (99) 99999-9999
+              }}
             />
           </Grid2>
           <Grid2 size={{ xs: 6 }}>
@@ -90,10 +100,13 @@ export const AddressForm = ({ onClose }) => {
               name="cep"
               label="Código Postal"
               value={formik.values.cep}
-              onChange={formik.handleChange}
+              onChange={handleMaskedChange("cep", maskCEP)}
               onBlur={formik.handleBlur}
               error={formik.touched.cep && Boolean(formik.errors.cep)}
               helperText={formik.touched.cep && formik.errors.cep}
+              inputProps={{
+                maxLength: 9, // 99999-999
+              }}
             />
           </Grid2>
           <Grid2 size={{ xs: 6 }}>
