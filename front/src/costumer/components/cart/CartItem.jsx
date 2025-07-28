@@ -17,29 +17,31 @@ export const CartItem = ({ item, isSelected, onSelect }) => {
   };
 
   return (
-    <div className="flex items-center gap-4">
-      <div className="flex items-center gap-2 relative">
-        <div className="absolute md:relative top-0 left-0">
-          <Checkbox
-            checked={isSelected}
-            onChange={onSelect}
-            inputProps={{ "aria-label": "checkbox" }}
-          />
-        </div>
+    // Envolvemos tudo numa div para garantir um contexto de layout consistente
+    <div className="flex items-start space-x-4 p-2 rounded-lg">
+      {/* Container para Checkbox e Imagem */}
+      <div className="flex-shrink-0 flex items-center space-x-2">
+        <Checkbox
+          checked={isSelected}
+          onChange={onSelect}
+          inputProps={{ "aria-label": "Select item" }}
+        />
         <img
-          className="w-28 md:h-28 rounded-md object-cover object-center"
+          className="w-20 h-20 md:w-28 md:h-28 rounded-md object-cover object-center"
           src={item.product?.images[0]}
           alt="Imagem do Produto"
         />
       </div>
 
-      <div className="flex flex-col sm:flex-row sm:items-center gap-2 justify-between w-full">
-        <div className="flex flex-col text-sm sm:gap-0 gap-1">
+      {/* Container principal para todos os detalhes e ações */}
+      <div className="flex flex-col sm:flex-row flex-grow justify-between items-start">
+        {/* Detalhes do produto */}
+        <div className="flex flex-col text-sm mb-2 sm:mb-0">
           <h2 className="font-semibold font-playfair text-base md:text-lg capitalize">
             {item.product?.title}
           </h2>
-          <p className="text-zinc-600 text-sm md:text-base">
-            {item.product?.description}
+          <p className="text-zinc-600 text-sm md:text-base hidden sm:block">
+            {item.product?.description.substring(0, 50)}...
           </p>
           <p className="text-zinc-400 capitalize">
             Vendido Por: {item.product?.seller?.businessDetails.businessName}
@@ -49,9 +51,14 @@ export const CartItem = ({ item, isSelected, onSelect }) => {
           </p>
         </div>
 
-        <div className="flex items-center justify-between sm:justify-normal md:gap-4 lg:gap-20">
-          <div className="flex sm:flex-col gap-2 items-center justify-center">
-            <div className="border border-black/10 rounded-md flex items-center gap-2 max-sm:order-3">
+        {/* Ações e Preço */}
+        <div className="flex flex-row sm:flex-col items-center justify-between w-full sm:w-auto sm:items-end gap-2">
+          <p className="text-base md:text-lg font-medium">
+            {item.sellingPrice} R$
+          </p>
+
+          <div className="flex items-center gap-2">
+            <div className="border border-black/10 rounded-md flex items-center">
               <IconButton
                 size="small"
                 disabled={item.quantity <= 1}
@@ -60,21 +67,15 @@ export const CartItem = ({ item, isSelected, onSelect }) => {
                 <Remove sx={{ fontSize: 16 }} />
               </IconButton>
 
-              <span className="text-sm sm:text-base">{item.quantity}</span>
+              <span className="text-sm sm:text-base px-2">{item.quantity}</span>
 
               <IconButton size="small" onClick={handleUpdateQuantity(1)}>
                 <Add sx={{ fontSize: 16 }} />
               </IconButton>
             </div>
 
-            <Button className="max-sm:order-2" size="small">
-              remover
-            </Button>
+            <Button size="small">remover</Button>
           </div>
-
-          <p className="text-base md:text-lg text-zinc-600 max-sm:-order-1">
-            {item.sellingPrice}R$
-          </p>
         </div>
       </div>
     </div>
