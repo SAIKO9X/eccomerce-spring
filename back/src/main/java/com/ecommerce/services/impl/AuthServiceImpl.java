@@ -52,19 +52,17 @@ public class AuthServiceImpl implements AuthService {
   @Override
   public void sentLoginOtp(String email, USER_ROLE role) throws Exception {
     String LOGIN_PREFIX = "login_";
-    String finalEmail = email;
+    String emailToProcess = email;
 
-    if (finalEmail.startsWith(LOGIN_PREFIX)) {
-      finalEmail = finalEmail.substring(LOGIN_PREFIX.length());
+    if (emailToProcess.startsWith(LOGIN_PREFIX)) {
+      emailToProcess = emailToProcess.substring(LOGIN_PREFIX.length());
     }
 
-    String emailForCheck = finalEmail;
+    final String emailForCheck = emailToProcess;
+
     if (role != null && role.equals(USER_ROLE.ROLE_SELLER)) {
       sellerRepository.findByEmail(emailForCheck)
         .orElseThrow(() -> new Exception("Vendedor não encontrado com o e-mail: " + emailForCheck));
-    } else {
-      userRepository.findByEmail(emailForCheck)
-        .orElseThrow(() -> new Exception("Usuário não encontrado com este e-mail."));
     }
 
     String otp = OtpUtil.generateOtp();

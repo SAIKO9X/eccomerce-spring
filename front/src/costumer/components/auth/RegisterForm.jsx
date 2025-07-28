@@ -37,7 +37,7 @@ export const RegisterForm = () => {
         console.error("Erro ao registrar:", error);
         const errorMessage =
           error.message || "Erro ao criar conta. Tente novamente.";
-        alert(errorMessage);  
+        alert(errorMessage);
       }
     },
   });

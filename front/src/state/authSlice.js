@@ -1,4 +1,3 @@
-// authSlice.js - CORRIGIDO
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { api } from "../config/Api";
 import { sellerLogin } from "./seller/sellerAuthSlice";
@@ -188,7 +187,6 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // IMPORTANTE: Sincronizar com sellerLogin
       .addCase(sellerLogin.fulfilled, (state, action) => {
         state.jwt = action.payload.jwt;
         state.role = action.payload.role;
