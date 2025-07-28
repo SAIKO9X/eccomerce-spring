@@ -13,8 +13,7 @@ import { FourthStep } from "./FourthStep";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../../state/store";
 import { registerSeller } from "../../../state/seller/sellerAuthSlice";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useFormik } from "formik";
 import { sellerAccountSchema } from "./sellerSchema";
 
 const steps = [
@@ -44,7 +43,7 @@ const stepFields = [
     "sellerName",
     "businessDetails.businessName",
     "businessDetails.businessEmail",
-    "businessDetails.businessMobile",
+    "businessDetails.businessPhone",
   ],
 ];
 
@@ -55,18 +54,8 @@ export const SellerAccountForm = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-    trigger,
-    watch,
-    setValue,
-    clearErrors,
-  } = useForm({
-    resolver: zodResolver(sellerAccountSchema),
-    mode: "onBlur",
-    defaultValues: {
+  const formik = useFormik({
+    initialValues: {
       mobile: "",
       cnpj: "",
       pickupAddress: {
@@ -91,26 +80,66 @@ export const SellerAccountForm = () => {
         logo: "",
       },
     },
+    validationSchema: sellerAccountSchema,
+    validateOnBlur: true,
+    validateOnChange: false,
+    onSubmit: async (values) => {
+      setSubmitFailed(false);
+      setIsSubmitting(true);
+      console.log("Formulário enviado:", values);
+      try {
+        await dispatch(registerSeller(values)).unwrap();
+        navigate("/verify-seller-email");
+      } catch (error) {
+        console.error("Erro ao criar conta de vendedor:", error);
+        alert("Erro ao criar conta. Tente novamente.");
+        setSubmitFailed(true);
+        Object.keys(formik.values).forEach((field) => {
+          formik.setFieldTouched(field, true, false);
+        });
+        await formik.validateForm();
+      } finally {
+        setIsSubmitting(false);
+      }
+    },
   });
 
-  const mainMobile = watch("mobile");
-
   useEffect(() => {
-    if (mainMobile) {
-      const options = {
-        shouldDirty: false,
-        shouldTouch: false,
-        shouldValidate: false,
-      };
-      setValue("pickupAddress.mobile", mainMobile, options);
-      setValue("businessDetails.businessPhone", mainMobile, options);
+    if (formik.values.mobile) {
+      formik.setFieldValue("pickupAddress.mobile", formik.values.mobile, false);
+      formik.setFieldValue(
+        "businessDetails.businessPhone",
+        formik.values.mobile,
+        false
+      );
     }
-  }, [mainMobile, setValue]);
+  }, [formik.values.mobile]);
+
+  const validateCurrentStep = async () => {
+    try {
+      await sellerAccountSchema.validate(formik.values, { abortEarly: false });
+      return true;
+    } catch (error) {
+      const invalidFields = error.inner.map((err) => err.path);
+      const currentStepFieldsSet = new Set(stepFields[activeStep]);
+      const hasErrorsInCurrentStep = invalidFields.some((field) =>
+        currentStepFieldsSet.has(field)
+      );
+      if (hasErrorsInCurrentStep) {
+        invalidFields.forEach((field) => {
+          if (currentStepFieldsSet.has(field)) {
+            formik.setFieldTouched(field, true, false);
+          }
+        });
+        await formik.validateForm();
+      }
+      return !hasErrorsInCurrentStep;
+    }
+  };
 
   const handleNext = async () => {
-    const isStepValid = await trigger(stepFields[activeStep]);
+    const isStepValid = await validateCurrentStep();
     if (isStepValid && activeStep < steps.length - 1) {
-      clearErrors(stepFields[activeStep + 1]);
       setActiveStep((prevActiveStep) => prevActiveStep + 1);
     }
   };
@@ -119,54 +148,24 @@ export const SellerAccountForm = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
-  const onSubmit = async (data) => {
-    setSubmitFailed(false);
-    setIsSubmitting(true);
-    console.log("Formulário enviado:", data);
-    try {
-      await dispatch(registerSeller(data)).unwrap();
-      navigate("/verify-seller-email");
-    } catch (error) {
-      console.error("Erro ao criar conta de vendedor:", error);
-      alert("Erro ao criar conta. Tente novamente.");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const onInvalid = (validationErrors) => {
-    console.log("Validação falhou:", validationErrors);
-    setSubmitFailed(true);
-  };
-
   return (
     <div>
       <Stepper activeStep={activeStep} alternativeLabel>
         {steps.map((label) => (
           <Step key={label}>
-            {" "}
-            <StepLabel>{label}</StepLabel>{" "}
+            <StepLabel>{label}</StepLabel>
           </Step>
         ))}
       </Stepper>
-
-      <form
-        onSubmit={handleSubmit(onSubmit, onInvalid)}
-        className="mt-10 space-y-4"
-      >
+      <form onSubmit={formik.handleSubmit} className="mt-10 space-y-4">
         <div>
-          {activeStep === 0 && <FirstStep control={control} errors={errors} />}
-          {activeStep === 1 && <SecondStep control={control} errors={errors} />}
-          {activeStep === 2 && <ThirdStep control={control} errors={errors} />}
+          {activeStep === 0 && <FirstStep formik={formik} />}
+          {activeStep === 1 && <SecondStep formik={formik} />}
+          {activeStep === 2 && <ThirdStep formik={formik} />}
           {activeStep === 3 && (
-            <FourthStep
-              control={control}
-              errors={errors}
-              submitFailed={submitFailed}
-            />
+            <FourthStep formik={formik} submitFailed={submitFailed} />
           )}
         </div>
-
         <div className="flex items-center justify-between">
           <Button
             onClick={handleBack}
@@ -175,7 +174,6 @@ export const SellerAccountForm = () => {
           >
             Voltar
           </Button>
-
           {activeStep === steps.length - 1 ? (
             <Button type="submit" variant="contained" disabled={isSubmitting}>
               {isSubmitting ? (

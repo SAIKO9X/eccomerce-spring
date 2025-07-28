@@ -1,121 +1,159 @@
 import { Grid2, TextField } from "@mui/material";
-import { Controller } from "react-hook-form";
 import { maskCEP, maskMobile } from "../../../utils/masks";
 
-export const SecondStep = ({ control, errors }) => {
+export const SecondStep = ({ formik }) => {
+  const handleMaskedChange = (fieldName, maskFunction) => (event) => {
+    const maskedValue = maskFunction(event.target.value);
+    formik.setFieldValue(fieldName, maskedValue);
+  };
+
+  const getFieldError = (fieldPath) => {
+    const [parent, child] = fieldPath.split(".");
+    return formik.touched[parent]?.[child] && formik.errors[parent]?.[child];
+  };
+
+  const getFieldTouched = (fieldPath) => {
+    const [parent, child] = fieldPath.split(".");
+    return formik.touched[parent]?.[child];
+  };
+
   return (
     <div className="max-h-auto">
       <p className="font-playfair text-lg font-medium text-center">
         Endereço de Retirada
       </p>
-
       <Grid2 container spacing={3} className="pt-4">
         <Grid2 size={{ xs: 12 }}>
-          <Controller
+          <TextField
+            fullWidth
             name="pickupAddress.recipient"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                fullWidth
-                label="Nome do Destinatário"
-                error={!!errors.pickupAddress?.recipient}
-                helperText={errors.pickupAddress?.recipient?.message}
-              />
-            )}
+            label="Nome do Destinatário"
+            value={formik.values.pickupAddress.recipient}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            error={
+              getFieldTouched("pickupAddress.recipient") &&
+              Boolean(getFieldError("pickupAddress.recipient"))
+            }
+            helperText={
+              getFieldTouched("pickupAddress.recipient") &&
+              getFieldError("pickupAddress.recipient")
+            }
           />
         </Grid2>
         <Grid2 size={{ xs: 6 }}>
-          <Controller
+          <TextField
+            fullWidth
+            disabled
             name="pickupAddress.mobile"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                disabled
-                fullWidth
-                label="Telefone do Destinatário"
-                onChange={(e) => field.onChange(maskMobile(e.target.value))}
-                error={!!errors.pickupAddress?.mobile}
-                helperText={errors.pickupAddress?.mobile?.message}
-              />
-            )}
+            label="Telefone do Destinatário"
+            value={formik.values.pickupAddress.mobile}
+            onChange={handleMaskedChange("pickupAddress.mobile", maskMobile)}
+            onBlur={formik.handleBlur}
+            error={
+              getFieldTouched("pickupAddress.mobile") &&
+              Boolean(getFieldError("pickupAddress.mobile"))
+            }
+            helperText={
+              getFieldTouched("pickupAddress.mobile") &&
+              getFieldError("pickupAddress.mobile")
+            }
+            inputProps={{
+              maxLength: 15, // (99) 99999-9999
+            }}
           />
         </Grid2>
         <Grid2 size={{ xs: 6 }}>
-          <Controller
+          <TextField
+            fullWidth
             name="pickupAddress.cep"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                fullWidth
-                label="Código Postal"
-                onChange={(e) => field.onChange(maskCEP(e.target.value))}
-                error={!!errors.pickupAddress?.cep}
-                helperText={errors.pickupAddress?.cep?.message}
-              />
-            )}
+            label="Código Postal"
+            value={formik.values.pickupAddress.cep}
+            onChange={handleMaskedChange("pickupAddress.cep", maskCEP)}
+            onBlur={formik.handleBlur}
+            error={
+              getFieldTouched("pickupAddress.cep") &&
+              Boolean(getFieldError("pickupAddress.cep"))
+            }
+            helperText={
+              getFieldTouched("pickupAddress.cep") &&
+              getFieldError("pickupAddress.cep")
+            }
+            inputProps={{
+              maxLength: 9, // 99999-999
+            }}
           />
         </Grid2>
         <Grid2 size={{ xs: 12 }}>
-          <Controller
+          <TextField
+            fullWidth
             name="pickupAddress.address"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                fullWidth
-                label="Endereço"
-                error={!!errors.pickupAddress?.address}
-                helperText={errors.pickupAddress?.address?.message}
-              />
-            )}
+            label="Endereço"
+            value={formik.values.pickupAddress.address}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            error={
+              getFieldTouched("pickupAddress.address") &&
+              Boolean(getFieldError("pickupAddress.address"))
+            }
+            helperText={
+              getFieldTouched("pickupAddress.address") &&
+              getFieldError("pickupAddress.address")
+            }
           />
         </Grid2>
         <Grid2 size={{ xs: 6 }}>
-          <Controller
+          <TextField
+            fullWidth
             name="pickupAddress.city"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                fullWidth
-                label="Cidade"
-                error={!!errors.pickupAddress?.city}
-                helperText={errors.pickupAddress?.city?.message}
-              />
-            )}
+            label="Cidade"
+            value={formik.values.pickupAddress.city}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            error={
+              getFieldTouched("pickupAddress.city") &&
+              Boolean(getFieldError("pickupAddress.city"))
+            }
+            helperText={
+              getFieldTouched("pickupAddress.city") &&
+              getFieldError("pickupAddress.city")
+            }
           />
         </Grid2>
         <Grid2 size={{ xs: 6 }}>
-          <Controller
+          <TextField
+            fullWidth
             name="pickupAddress.state"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                fullWidth
-                label="Estado"
-                error={!!errors.pickupAddress?.state}
-                helperText={errors.pickupAddress?.state?.message}
-              />
-            )}
+            label="Estado"
+            value={formik.values.pickupAddress.state}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            error={
+              getFieldTouched("pickupAddress.state") &&
+              Boolean(getFieldError("pickupAddress.state"))
+            }
+            helperText={
+              getFieldTouched("pickupAddress.state") &&
+              getFieldError("pickupAddress.state")
+            }
           />
         </Grid2>
         <Grid2 size={{ xs: 12 }}>
-          <Controller
+          <TextField
+            fullWidth
             name="pickupAddress.locality"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                fullWidth
-                label="Localidade"
-                error={!!errors.pickupAddress?.locality}
-                helperText={errors.pickupAddress?.locality?.message}
-              />
-            )}
+            label="Localidade"
+            value={formik.values.pickupAddress.locality}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            error={
+              getFieldTouched("pickupAddress.locality") &&
+              Boolean(getFieldError("pickupAddress.locality"))
+            }
+            helperText={
+              getFieldTouched("pickupAddress.locality") &&
+              getFieldError("pickupAddress.locality")
+            }
           />
         </Grid2>
       </Grid2>

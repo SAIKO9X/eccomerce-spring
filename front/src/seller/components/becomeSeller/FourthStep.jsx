@@ -1,60 +1,98 @@
 import { TextField } from "@mui/material";
-import { Controller } from "react-hook-form";
 
-export const FourthStep = ({ control, errors, submitFailed }) => {
+export const FourthStep = ({ formik, submitFailed }) => {
+  const getFieldError = (fieldPath) => {
+    if (fieldPath.includes(".")) {
+      const [parent, child] = fieldPath.split(".");
+      return formik.touched[parent]?.[child] && formik.errors[parent]?.[child];
+    }
+    return formik.touched[fieldPath] && formik.errors[fieldPath];
+  };
+
+  const getFieldTouched = (fieldPath) => {
+    if (fieldPath.includes(".")) {
+      const [parent, child] = fieldPath.split(".");
+      return formik.touched[parent]?.[child];
+    }
+    return formik.touched[fieldPath];
+  };
+
   const showGeneralError =
-    submitFailed && (errors.sellerName || errors.businessDetails?.businessName);
+    submitFailed &&
+    (formik.errors.sellerName || formik.errors.businessDetails?.businessName);
 
   return (
     <div>
       <p className="text-lg font-playfair font-medium text-center pb-6">
         Detalhes do Fornecedor
       </p>
-
       <div className="flex flex-col gap-4">
-        <Controller
+        <TextField
+          fullWidth
           name="sellerName"
-          control={control}
-          render={({ field }) => (
-            <TextField {...field} fullWidth label="Seu Nome de Vendedor" />
-          )}
+          label="Seu Nome de Vendedor"
+          value={formik.values.sellerName}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          error={
+            getFieldTouched("sellerName") &&
+            Boolean(getFieldError("sellerName"))
+          }
+          helperText={
+            getFieldTouched("sellerName") && getFieldError("sellerName")
+          }
         />
-        <Controller
+        <TextField
+          fullWidth
           name="businessDetails.businessName"
-          control={control}
-          render={({ field }) => (
-            <TextField {...field} fullWidth label="Nome da Empresa" />
-          )}
+          label="Nome da Empresa"
+          value={formik.values.businessDetails.businessName}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          error={
+            getFieldTouched("businessDetails.businessName") &&
+            Boolean(getFieldError("businessDetails.businessName"))
+          }
+          helperText={
+            getFieldTouched("businessDetails.businessName") &&
+            getFieldError("businessDetails.businessName")
+          }
         />
-        <Controller
+        <TextField
+          fullWidth
           name="businessDetails.businessEmail"
-          control={control}
-          render={({ field }) => (
-            <TextField
-              {...field}
-              fullWidth
-              label="Email da Empresa"
-              error={!!errors.businessDetails?.businessEmail}
-              helperText={errors.businessDetails?.businessEmail?.message}
-            />
-          )}
+          label="Email da Empresa"
+          type="email"
+          value={formik.values.businessDetails.businessEmail}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          error={
+            getFieldTouched("businessDetails.businessEmail") &&
+            Boolean(getFieldError("businessDetails.businessEmail"))
+          }
+          helperText={
+            getFieldTouched("businessDetails.businessEmail") &&
+            getFieldError("businessDetails.businessEmail")
+          }
         />
-        <Controller
+        <TextField
+          fullWidth
+          disabled
           name="businessDetails.businessPhone"
-          control={control}
-          render={({ field }) => (
-            <TextField
-              {...field}
-              fullWidth
-              disabled
-              label="Telefone da Empresa"
-              error={!!errors.businessDetails?.businessPhone}
-              helperText={errors.businessDetails?.businessPhone?.message}
-            />
-          )}
+          label="Telefone da Empresa"
+          value={formik.values.businessDetails.businessPhone}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          error={
+            getFieldTouched("businessDetails.businessPhone") &&
+            Boolean(getFieldError("businessDetails.businessPhone"))
+          }
+          helperText={
+            getFieldTouched("businessDetails.businessPhone") &&
+            getFieldError("businessDetails.businessPhone")
+          }
         />
       </div>
-
       {showGeneralError && (
         <p className="text-red-500 text-sm mt-4 text-center">
           Todos os campos obrigatórios devem ser preenchidos para continuar.
