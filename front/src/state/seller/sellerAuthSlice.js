@@ -1,24 +1,30 @@
+// sellerAuthSlice.js - CORRIGIDO
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { api } from "../../config/Api";
-import { logout } from "../authSlice";
 
 const initialState = {
   jwt: null,
   isLoggedIn: false,
   loading: false,
   error: null,
+  role: null, // Adicionar role aqui também
 };
 
 export const sellerLogin = createAsyncThunk(
   "/sellers/login",
-  async (loginRequest, { rejectWithValue, dispatch }) => {
+  async (loginRequest, { rejectWithValue }) => {
     try {
-      dispatch(logout({ navigate: () => {} }));
       const response = await api.post("/sellers/login", loginRequest);
       console.log("seller login", response.data);
+
       localStorage.setItem("jwt", response.data.jwt);
       localStorage.setItem("role", "ROLE_SELLER");
-      return { jwt: response.data.jwt, role: "ROLE_SELLER" };
+
+      return {
+        jwt: response.data.jwt,
+        role: "ROLE_SELLER",
+        message: response.data.message,
+      };
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }
@@ -53,7 +59,15 @@ export const verifySellerEmail = createAsyncThunk(
 const sellerAuthSlice = createSlice({
   name: "sellerAuth",
   initialState,
-  reducers: {},
+  reducers: {
+    // Adicionar reducer para limpar estado
+    clearSellerAuth: (state) => {
+      state.jwt = null;
+      state.isLoggedIn = false;
+      state.role = null;
+      state.error = null;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(sellerLogin.pending, (state) => {
@@ -63,11 +77,14 @@ const sellerAuthSlice = createSlice({
       .addCase(sellerLogin.fulfilled, (state, action) => {
         state.loading = false;
         state.jwt = action.payload.jwt;
+        state.role = action.payload.role;
         state.isLoggedIn = true;
+        state.error = null;
       })
       .addCase(sellerLogin.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+        state.isLoggedIn = false;
       })
       .addCase(registerSeller.pending, (state) => {
         state.loading = true;
@@ -94,4 +111,5 @@ const sellerAuthSlice = createSlice({
   },
 });
 
+export const { clearSellerAuth } = sellerAuthSlice.actions;
 export default sellerAuthSlice.reducer;

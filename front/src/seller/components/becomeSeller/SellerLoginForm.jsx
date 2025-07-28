@@ -1,31 +1,31 @@
+// SellerLoginForm.jsx - CORRIGIDO
 import { Button, CircularProgress, TextField } from "@mui/material";
 import { useFormik } from "formik";
 import { sendLoginRegisterOtp } from "../../../state/authSlice";
 import { sellerLogin } from "../../../state/seller/sellerAuthSlice";
-import { useAppDispatch, useAppSelector } from "../../../state/store";
-import { useNavigate } from "react-router-dom";
+import { useAppSelector, useAppDispatch } from "../../../state/store";
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 export const SellerLoginForm = () => {
-  const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const sellerState = useAppSelector((store) => store.seller);
-  const { auth } = useAppSelector((store) => store);
-
-  useEffect(() => {
-    if (sellerState.seller) {
-      navigate("/seller");
-    }
-  }, [sellerState.seller, navigate]);
+  const navigate = useNavigate();
+  const { auth, sellerAuth } = useAppSelector((store) => store);
 
   const formik = useFormik({
     initialValues: {
       email: "",
       otp: "",
     },
-    onSubmit: (values) => {
+    onSubmit: async (values) => {
       console.log("become seller login", values);
-      dispatch(sellerLogin(values));
+      try {
+        const result = await dispatch(sellerLogin(values)).unwrap();
+        console.log("Login successful:", result);
+        // O redirecionamento será feito pelo useEffect no App.jsx
+      } catch (error) {
+        console.error("Login error:", error);
+      }
     },
   });
 
@@ -37,6 +37,14 @@ export const SellerLoginForm = () => {
       })
     );
   };
+
+  // Redirecionamento adicional como backup
+  useEffect(() => {
+    if (auth.isLoggedIn && auth.role === "ROLE_SELLER") {
+      console.log("Redirecting to seller dashboard...");
+      navigate("/seller");
+    }
+  }, [auth.isLoggedIn, auth.role, navigate]);
 
   return (
     <div className="flex flex-col justify-center h-full">
@@ -74,13 +82,20 @@ export const SellerLoginForm = () => {
           </div>
         )}
 
+        {/* Mostrar erro se existir */}
+        {(auth.error || sellerAuth?.error) && (
+          <p className="text-red-500 text-sm">
+            {auth.error || sellerAuth?.error}
+          </p>
+        )}
+
         {!auth.otpSent ? (
           <Button
             fullWidth
             variant="contained"
             sx={{ py: 1.5 }}
             onClick={handleSentOtp}
-            disabled={auth.loading}
+            disabled={auth.loading || !formik.values.email}
           >
             {auth.loading ? (
               <CircularProgress color="secondary" size={24} />
@@ -94,9 +109,13 @@ export const SellerLoginForm = () => {
             variant="contained"
             sx={{ py: 1.5 }}
             onClick={() => formik.handleSubmit()}
-            disabled={auth.loading || sellerState.loading}
+            disabled={
+              auth.loading ||
+              (sellerAuth && sellerAuth.loading) ||
+              !formik.values.otp
+            }
           >
-            {auth.loading || sellerState.loading ? (
+            {auth.loading || (sellerAuth && sellerAuth.loading) ? (
               <CircularProgress color="secondary" size={24} />
             ) : (
               "Login"

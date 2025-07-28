@@ -34,66 +34,66 @@ export const App = () => {
   const hasInitializedRef = useRef(false);
 
   useEffect(() => {
-    let isMounted = true;
-
-    dispatch(initializeAuth());
     const jwt = localStorage.getItem("jwt");
+    if (jwt && !auth.jwt) {
+      dispatch(initializeAuth());
+    }
 
-    if (jwt) {
+    if (auth.jwt) {
       const role = localStorage.getItem("role");
-      if (role === "ROLE_SELLER") {
-        dispatch(fetchSellerProfile(jwt));
-      } else if (role === "ROLE_CUSTOMER" || role === "ROLE_ADMIN") {
-        dispatch(getUserProfile({ jwt }));
+      if (role === "ROLE_SELLER" && !seller.profile) {
+        dispatch(fetchSellerProfile(auth.jwt));
+      } else if (
+        (role === "ROLE_CUSTOMER" || role === "ROLE_ADMIN") &&
+        !auth.user
+      ) {
+        dispatch(getUserProfile({ jwt: auth.jwt }));
       }
     }
 
-    if (
-      !home.homePageData &&
-      !home.loading &&
-      !hasInitializedRef.current &&
-      isMounted
-    ) {
+    if (!home.homePageData && !home.loading && !hasInitializedRef.current) {
       hasInitializedRef.current = true;
       dispatch(createHomeCategories({ homeCategories }))
         .unwrap()
         .then(() => {
-          if (isMounted)
-            console.log("Home categories initialized successfully");
+          console.log("Home categories initialized successfully");
         })
         .catch((error) => {
-          if (isMounted)
-            console.error("Failed to initialize home categories:", error);
+          console.error("Failed to initialize home categories:", error);
         });
     }
-
-    return () => {
-      isMounted = false;
-    };
-  }, [dispatch, home.homePageData, home.loading]);
+  }, [dispatch, auth.jwt]);
 
   useEffect(() => {
     const { isLoggedIn, role } = auth;
     const { pathname } = location;
 
-    if (isLoggedIn) {
-      if (pathname === "/login" || pathname === "/become-seller") {
+    console.log("Redirection check:", { isLoggedIn, role, pathname });
+
+    if (isLoggedIn && role) {
+      if (
+        pathname === "/login" ||
+        pathname === "/become-seller" ||
+        pathname === "/become-seller/login"
+      ) {
+        console.log("Redirecting based on role:", role);
+
         if (role === "ROLE_ADMIN") {
-          navigate("/admin");
+          navigate("/admin", { replace: true });
         } else if (role === "ROLE_SELLER") {
-          navigate("/seller");
+          navigate("/seller", { replace: true });
         } else {
-          navigate("/");
+          navigate("/", { replace: true });
         }
         return;
       }
 
       if (pathname.startsWith("/admin") && role !== "ROLE_ADMIN") {
-        navigate("/");
+        navigate("/", { replace: true });
       } else if (pathname.startsWith("/seller") && role !== "ROLE_SELLER") {
-        navigate("/");
+        navigate("/", { replace: true });
       } else if (pathname.startsWith("/account") && role !== "ROLE_CUSTOMER") {
-        navigate("/");
+        navigate("/", { replace: true });
       }
     } else {
       if (
@@ -101,10 +101,10 @@ export const App = () => {
         pathname.startsWith("/seller") ||
         pathname.startsWith("/admin")
       ) {
-        navigate("/login");
+        navigate("/login", { replace: true });
       }
     }
-  }, [auth.isLoggedIn, auth.role, seller.profile, navigate, location.pathname]);
+  }, [auth.isLoggedIn, auth.role, navigate, location.pathname]);
 
   const pathsToHideNavbar = [
     "/login",

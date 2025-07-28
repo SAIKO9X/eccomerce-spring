@@ -1,6 +1,7 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import { useDispatch, useSelector } from "react-redux";
 import { thunk } from "redux-thunk";
+
 import sellerSlice from "./seller/sellerSlice";
 import sellerProductSlice from "./seller/sellerProductSlice";
 import cartSlice from "./customer/cartSlice";
@@ -34,19 +35,26 @@ const rootReducer = combineReducers({
   sellerProduct: sellerProductSlice,
   sellerOrder: sellerOrderSlice,
   transactions: transactionSlice,
-  sellerAuthSlice: sellerAuthSlice,
+  sellerAuth: sellerAuthSlice,
 
   // Admin
   adminSlice: adminSlice,
   deal: dealSlice,
-  auth: authSlice,
   categories: adminCategorySlice,
   adminCoupon: adminCouponSlice,
+
+  // Auth (principal)
+  auth: authSlice,
 });
 
 export const store = configureStore({
   reducer: rootReducer,
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(thunk),
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: ["persist/PERSIST"],
+      },
+    }).concat(thunk),
 });
 
 export const useAppDispatch = () => useDispatch();

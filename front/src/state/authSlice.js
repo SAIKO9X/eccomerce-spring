@@ -1,12 +1,16 @@
+// authSlice.js - CORRIGIDO
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { api } from "../config/Api";
+import { sellerLogin } from "./seller/sellerAuthSlice";
 
 const initialState = {
   jwt: null,
   otpSent: false,
   isLoggedIn: false,
   user: null,
+  role: null,
   loading: false,
+  error: null,
 };
 
 export const sendLoginRegisterOtp = createAsyncThunk(
@@ -28,6 +32,7 @@ export const login = createAsyncThunk(
     try {
       const response = await api.post("/auth/login", loginRequest);
       console.log("login request", response.data);
+
       localStorage.setItem("jwt", response.data.jwt);
       localStorage.setItem("role", response.data.role);
 
@@ -48,8 +53,10 @@ export const register = createAsyncThunk(
     try {
       const response = await api.post("/auth/register", registerRequest);
       console.log("register request", response.data);
+
       localStorage.setItem("jwt", response.data.jwt);
       localStorage.setItem("role", response.data.role);
+
       return { jwt: response.data.jwt, role: response.data.role };
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
@@ -121,19 +128,6 @@ export const deleteUserAddress = createAsyncThunk(
   }
 );
 
-export const logout = createAsyncThunk(
-  "/auth/logout",
-  async (_, { rejectWithValue }) => {
-    try {
-      localStorage.removeItem("jwt");
-      localStorage.removeItem("role");
-      console.log("logout success");
-    } catch (error) {
-      return rejectWithValue(error.response?.data || error.message);
-    }
-  }
-);
-
 export const updateUserProfile = createAsyncThunk(
   "users/updateProfile",
   async ({ userData, jwt }, { rejectWithValue }) => {
@@ -162,6 +156,19 @@ export const updateAdminProfile = createAsyncThunk(
   }
 );
 
+export const logout = createAsyncThunk(
+  "/auth/logout",
+  async (_, { rejectWithValue }) => {
+    try {
+      localStorage.removeItem("jwt");
+      localStorage.removeItem("role");
+      console.log("logout success");
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
+
 const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -175,23 +182,48 @@ const authSlice = createSlice({
         state.isLoggedIn = true;
       }
     },
+    clearAuthError: (state) => {
+      state.error = null;
+    },
   },
   extraReducers: (builder) => {
     builder
+      // IMPORTANTE: Sincronizar com sellerLogin
+      .addCase(sellerLogin.fulfilled, (state, action) => {
+        state.jwt = action.payload.jwt;
+        state.role = action.payload.role;
+        state.isLoggedIn = true;
+        state.error = null;
+      })
+      .addCase(sellerLogin.rejected, (state, action) => {
+        state.error = action.payload;
+        state.isLoggedIn = false;
+      })
       .addCase(sendLoginRegisterOtp.pending, (state) => {
         state.loading = true;
+        state.error = null;
       })
       .addCase(sendLoginRegisterOtp.fulfilled, (state) => {
         state.loading = false;
         state.otpSent = true;
       })
-      .addCase(sendLoginRegisterOtp.rejected, (state) => {
+      .addCase(sendLoginRegisterOtp.rejected, (state, action) => {
         state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(login.pending, (state) => {
+        state.loading = true;
+        state.error = null;
       })
       .addCase(login.fulfilled, (state, action) => {
+        state.loading = false;
         state.jwt = action.payload.jwt;
         state.role = action.payload.role;
         state.isLoggedIn = true;
+      })
+      .addCase(login.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       })
       .addCase(register.fulfilled, (state, action) => {
         state.jwt = action.payload.jwt;
@@ -207,13 +239,17 @@ const authSlice = createSlice({
         state.role = null;
         state.isLoggedIn = false;
         state.user = null;
+        state.otpSent = false;
       })
       .addCase(addAddress.pending, (state) => {
         state.loading = true;
+        state.error = null;
       })
       .addCase(addAddress.fulfilled, (state, action) => {
         state.loading = false;
-        state.user.addresses = [...state.user.addresses, action.payload]; // Atualiza localmente
+        if (state.user && state.user.addresses) {
+          state.user.addresses = [...state.user.addresses, action.payload];
+        }
       })
       .addCase(addAddress.rejected, (state, action) => {
         state.loading = false;
@@ -231,26 +267,55 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
+      .addCase(updateUserAddress.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
       .addCase(updateUserAddress.fulfilled, (state, action) => {
         state.loading = false;
-        const index = state.user.addresses.findIndex(
-          (addr) => addr.id === action.payload.id
-        );
-        if (index !== -1) {
-          state.user.addresses[index] = action.payload;
+        if (state.user && state.user.addresses) {
+          const index = state.user.addresses.findIndex(
+            (addr) => addr.id === action.payload.id
+          );
+          if (index !== -1) {
+            state.user.addresses[index] = action.payload;
+          }
         }
+      })
+      .addCase(updateUserAddress.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(deleteUserAddress.pending, (state) => {
+        state.loading = true;
+        state.error = null;
       })
       .addCase(deleteUserAddress.fulfilled, (state, action) => {
         state.loading = false;
-        state.user.addresses = state.user.addresses.filter(
-          (addr) => addr.id !== action.payload
-        );
+        if (state.user && state.user.addresses) {
+          state.user.addresses = state.user.addresses.filter(
+            (addr) => addr.id !== action.payload
+          );
+        }
+      })
+      .addCase(deleteUserAddress.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(updateAdminProfile.pending, (state) => {
+        state.loading = true;
+        state.error = null;
       })
       .addCase(updateAdminProfile.fulfilled, (state, action) => {
+        state.loading = false;
         state.user = action.payload;
+      })
+      .addCase(updateAdminProfile.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
   },
 });
 
-export const { initializeAuth } = authSlice.actions;
+export const { initializeAuth, clearAuthError } = authSlice.actions;
 export default authSlice.reducer;
