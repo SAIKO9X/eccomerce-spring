@@ -1,15 +1,13 @@
 package com.ecommerce.security;
 
 import com.ecommerce.providers.JWTProvider;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -34,23 +32,19 @@ public class JwtTokenValidator extends OncePerRequestFilter {
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
     String header = request.getHeader("Authorization");
 
-    if (header != null) {
+    if (header != null && header.startsWith("Bearer ")) {
+      String token = header.substring(7);
       try {
-        var token = this.jwtProvider.validateToken(header);
-        String email = String.valueOf(token.get("email"));
-        String authorities = String.valueOf(token.get("authorities"));
+        Claims claims = jwtProvider.validateToken(token);
+        String email = String.valueOf(claims.get("email"));
+        String authorities = String.valueOf(claims.get("authorities"));
 
-        List<GrantedAuthority> auth = AuthorityUtils.commaSeparatedStringToAuthorityList(authorities);
-        Authentication authentication = new UsernamePasswordAuthenticationToken(email, null, auth);
+        List<GrantedAuthority> auths = AuthorityUtils.commaSeparatedStringToAuthorityList(authorities);
+        Authentication authentication = new UsernamePasswordAuthenticationToken(email, null, auths);
         SecurityContextHolder.getContext().setAuthentication(authentication);
-      } catch (ExpiredJwtException e) {
-        response.setStatus(HttpStatus.UNAUTHORIZED.value());
-        response.getWriter().write("Token expired");
-        return;
-      } catch (JwtException e) {
-        response.setStatus(HttpStatus.UNAUTHORIZED.value());
-        response.getWriter().write("Invalid token");
-        return;
+
+      } catch (Exception e) {
+        SecurityContextHolder.clearContext();
       }
     }
 

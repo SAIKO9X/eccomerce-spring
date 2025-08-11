@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -39,6 +40,7 @@ public class AppConfig {
             "/swagger-resources/**",
             "/swagger-ui.html"
           ).permitAll()
+          .requestMatchers(HttpMethod.GET, "/admin/categories").permitAll()
           .requestMatchers("/api/admin/**").hasRole("ADMIN")
           .requestMatchers("/api/**").authenticated()
           .requestMatchers("/api/products/*/reviews").authenticated()
