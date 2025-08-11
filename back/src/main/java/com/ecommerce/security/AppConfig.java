@@ -2,6 +2,7 @@ package com.ecommerce.security;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -17,11 +18,15 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 @Configuration
 @EnableWebSecurity
 public class AppConfig {
+
+  @Value("${cors.allowed-origins}")
+  private String[] allowedOrigins;
 
   @Autowired
   private JwtTokenValidator jwtTokenValidator;
@@ -55,7 +60,7 @@ public class AppConfig {
       @Override
       public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
         CorsConfiguration cfg = new CorsConfiguration();
-        cfg.setAllowedOrigins(Collections.singletonList("http://localhost:5173"));
+        cfg.setAllowedOrigins(Arrays.asList(allowedOrigins));
         cfg.setAllowedMethods(Collections.singletonList("*"));
         cfg.setAllowedHeaders(Collections.singletonList("*"));
         cfg.setAllowCredentials(true);
