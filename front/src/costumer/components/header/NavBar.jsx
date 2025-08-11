@@ -79,7 +79,8 @@ export const Navbar = () => {
 
   const userInitial = auth.user?.fullName?.charAt(0)?.toUpperCase() || "";
   const cartItemCount =
-    cart?.cartItems?.reduce((total, item) => total + item.quantity, 0) || 0;
+    cart.cart?.cartItems?.reduce((total, item) => total + item.quantity, 0) ||
+    0;
 
   const handleSearch = () => {
     if (searchQuery.trim()) {
