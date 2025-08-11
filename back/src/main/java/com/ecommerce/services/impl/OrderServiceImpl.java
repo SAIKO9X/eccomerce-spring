@@ -26,7 +26,11 @@ public class OrderServiceImpl implements OrderService {
 
   @Override
   public Set<Order> createOrder(User user, Address shippingAddress, List<Long> cartItemIds) throws Exception {
+    shippingAddress.setUser(user);
     Address address = addressRepository.save(shippingAddress);
+    user.getAddresses().add(address);
+    userRepository.save(user);
+
     Cart cart = cartRepository.findByUserId(user.getId());
 
     List<CartItem> selectedItems = cart.getCartItems().stream()
