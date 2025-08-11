@@ -193,6 +193,7 @@ export const Navbar = () => {
                   <Avatar
                     className="cursor-pointer"
                     sx={{ width: 29, height: 29 }}
+                    src={auth.user?.avatar}
                   >
                     {userInitial}
                   </Avatar>
