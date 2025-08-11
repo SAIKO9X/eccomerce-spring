@@ -119,8 +119,24 @@ const productSlice = createSlice({
       .addCase(getSimilarProducts.fulfilled, handleFetchSimilarProductsSuccess)
       .addCase(getSimilarProducts.rejected, handleError)
       .addCase(createReview.fulfilled, (state, action) => {
-        if (state.product && state.product.id === action.payload.product.id) {
-          // Ajustar depois...
+        const newReview = action.payload;
+        const { productId } = action.meta.arg; // Obtem o ID dos argumentos originais da ação
+
+        // Verifica se o produto atual na tela é o mesmo que foi avaliado
+        if (state.product && state.product.id === Number(productId)) {
+          // Atualiza a contagem e a média de avaliações de forma otimista
+          const oldTotalReviews = state.product.totalReviews || 0;
+          const oldAverageRating = state.product.averageRating || 0;
+          const newTotalReviews = oldTotalReviews + 1;
+
+          // Calcula a nova média
+          const newAverageRating =
+            (oldAverageRating * oldTotalReviews + newReview.rating) /
+            newTotalReviews;
+
+          // Atualiza o estado do produto
+          state.product.totalReviews = newTotalReviews;
+          state.product.averageRating = newAverageRating;
         }
       });
   },

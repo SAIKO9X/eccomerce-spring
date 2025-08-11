@@ -23,6 +23,7 @@ public class Review {
   private Long id;
 
   @NotBlank(message = "Review text cannot be blank")
+  @Column(columnDefinition = "TEXT")
   private String reviewText;
 
   @NotNull(message = "Rating cannot be null")
