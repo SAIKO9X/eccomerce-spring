@@ -4,27 +4,50 @@ import { OrderStepper } from "./OrderStepper";
 import { Payments } from "@mui/icons-material";
 import { useEffect } from "react";
 import {
+  cancelOrder,
   getOrderById,
   getOrderItemById,
 } from "../../../state/customer/orderSlice";
 import { formatCurrencyBRL } from "../../../utils/formatCurrencyBRL";
 import { useAppDispatch, useAppSelector } from "../../../state/store";
+import { useAlert } from "../../../utils/useAlert";
 
 export const OrderDetails = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { orderId, orderItemId } = useParams();
   const { order } = useAppSelector((state) => state);
+  const { showAlert, AlertComponent } = useAlert();
 
   useEffect(() => {
-    dispatch(getOrderById({ orderId, jwt: localStorage.getItem("jwt") }));
-    dispatch(
-      getOrderItemById({ orderItemId, jwt: localStorage.getItem("jwt") })
-    );
-  }, []);
+    const jwt = localStorage.getItem("jwt");
+    dispatch(getOrderById({ orderId, jwt }));
+    dispatch(getOrderItemById({ orderItemId, jwt }));
+  }, [dispatch, orderId, orderItemId]);
+
+  // Função para lidar com o cancelamento do pedido
+  const handleCancelOrder = () => {
+    if (window.confirm("Tem certeza que deseja cancelar este pedido?")) {
+      const jwt = localStorage.getItem("jwt");
+      dispatch(cancelOrder({ jwt, orderId }))
+        .unwrap()
+        .then(() => {
+          showAlert("Pedido cancelado com sucesso!", "success");
+          dispatch(getOrderById({ orderId, jwt }));
+        })
+        .catch((error) => {
+          showAlert(error?.message || "Erro ao cancelar o pedido.", "error");
+        });
+    }
+  };
+
+  const isCancelled = order.currentOrder?.orderStatus === "CANCELLED";
 
   return (
     <div className="space-y-5">
+      {/* Componente de Alerta para feedback */}
+      <AlertComponent />
+
       <div className="flex flex-col gap-5 justify-center items-center">
         <img
           className="w-28 object-center object-cover rounded-md"
@@ -57,7 +80,8 @@ export const OrderDetails = () => {
       </div>
 
       <div className="border border-black/10 p-5 rounded-md">
-        <OrderStepper orderStatus={"SHIPPED"} />
+        {/* Passa o status real do pedido para o stepper */}
+        <OrderStepper orderStatus={order.currentOrder?.orderStatus} />
       </div>
 
       <div className="border border-black/10 p-5 rounded-md">
@@ -84,13 +108,6 @@ export const OrderDetails = () => {
         <div className="flex justify-between items-center text-sm p-5">
           <div className="space-y-1">
             <p className="font-semibold">Preço Total do Pedido</p>
-            <p>
-              Você salvou{" "}
-              <span className="text-xs font-medium text-zinc-400">
-                50,00 R$
-              </span>{" "}
-              nesse pedido
-            </p>
           </div>
 
           <p className="font-medium">
@@ -118,13 +135,14 @@ export const OrderDetails = () => {
 
         <div className="px-10 pb-5">
           <Button
-            // onClick={handleCancelOrder}
+            onClick={handleCancelOrder}
             color="error"
             sx={{ py: "0.7rem" }}
             variant="outlined"
             fullWidth
+            disabled={isCancelled}
           >
-            {false ? "Pedido Cancelado" : "Cancelar Pedido"}
+            {isCancelled ? "Pedido Cancelado" : "Cancelar Pedido"}
           </Button>
         </div>
       </div>
