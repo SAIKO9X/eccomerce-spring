@@ -6,9 +6,11 @@ import com.ecommerce.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+@Order(0)
 @Component
 @RequiredArgsConstructor
 public class DataInitializationComponent implements CommandLineRunner {
@@ -31,7 +33,7 @@ public class DataInitializationComponent implements CommandLineRunner {
   }
 
   private void initializerAdminUser() {
-    if (userRepository.findByEmail(adminEmail) == null) {
+    if (userRepository.findByEmail(adminEmail).isEmpty()) {
       User adminUser = new User();
       adminUser.setPassword(passwordEncoder.encode(adminPassword));
       adminUser.setFullName(adminFullName);
