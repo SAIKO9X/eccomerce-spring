@@ -36,6 +36,14 @@ admin:
   password: ${ADMIN_PASSWORD}
   fullName: ${ADMIN_FULL_NAME}
 
+# --- Credenciais do Vendedor Padrão ---
+default-seller:
+  email: ${DEFAULT_SELLER_EMAIL}
+  name: ${DEFAULT_SELLER_NAME}
+  business-name: ${DEFAULT_SELLER_BUSINESS_NAME}
+  cnpj: ${DEFAULT_SELLER_CNPJ}
+  mobile: ${DEFAULT_SELLER_MOBILE}
+
 # --- Chaves das APIs de Pagamento ---
 stripe:
   secret:

@@ -7,9 +7,9 @@ import com.ecommerce.repositories.CategoryRepository;
 import com.ecommerce.repositories.ProductRepository;
 import com.ecommerce.repositories.SellerRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -25,29 +25,45 @@ public class DataSeeder implements CommandLineRunner {
   private final SellerRepository sellerRepository;
   private final ProductRepository productRepository;
   private final CategoryRepository categoryRepository;
-  private final PasswordEncoder passwordEncoder;
+
+  // Injeta as novas variáveis de ambiente
+  @Value("${default-seller.email}")
+  private String defaultSellerEmail;
+
+  @Value("${default-seller.name}")
+  private String defaultSellerName;
+
+  @Value("${default-seller.business-name}")
+  private String defaultSellerBusinessName;
+
+  @Value("${default-seller.cnpj}")
+  private String defaultSellerCnpj;
+
+  @Value("${default-seller.mobile}")
+  private String defaultSellerMobile;
+
 
   @Override
   public void run(String... args) throws Exception {
-    if (sellerRepository.findByEmail("apple_store@example.com").isEmpty()) {
+    if (sellerRepository.findByEmail(defaultSellerEmail).isEmpty()) {
       System.out.println("Criando vendedor padrão...");
       Seller defaultSeller = createDefaultSeller();
       System.out.println("Vendedor padrão criado. Criando produtos...");
       createDefaultProducts(defaultSeller);
       System.out.println("Produtos padrão criados com sucesso.");
     } else {
-      System.out.println("Vendedor padrão 'Apple Store Oficial' já existe. Nenhuma ação necessária.");
+      System.out.println("Vendedor padrão '" + defaultSellerName + "' já existe. Nenhuma ação necessária.");
     }
   }
 
   private Seller createDefaultSeller() {
     Seller seller = new Seller();
-    seller.setSellerName("Apple Store Oficial");
-    seller.setEmail("apple_store@example.com");
-    seller.setCNPJ("12345678000195");
-    seller.setMobile("11987654321");
+    seller.setSellerName(defaultSellerName);
+    seller.setEmail(defaultSellerEmail);
+    seller.setCNPJ(defaultSellerCnpj);
+    seller.setMobile(defaultSellerMobile);
     seller.setEmailVerified(true);
-    seller.getBusinessDetails().setBusinessName("Apple Store Oficial LTDA");
+    seller.getBusinessDetails().setBusinessName(defaultSellerBusinessName);
     return sellerRepository.save(seller);
   }
 
