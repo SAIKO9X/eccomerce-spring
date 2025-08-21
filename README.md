@@ -6,6 +6,25 @@ O sistema inclui gerenciamento de produtos, carrinho de compras, lista de desejo
 
 ---
 
+## ✨ Preview do Projeto
+
+<table>
+  <tr>
+    <td align="center"><strong>Página do Produto</strong></td>
+    <td align="center"><strong>Checkout de Pagamento</strong></td>
+    <td align="center"><strong>Dashboard do Administrador</strong></td>
+    <td align="center"><strong>Dashboard do Vendedor</strong></td>
+  </tr>
+  <tr>
+    <td><img src="previews/produto.png" alt="Página de detalhes do produto com informações, avaliações e imagens."/></td>
+    <td><img src="previews/pagamento.png" alt="Página de checkout com seleção de endereço e métodos de pagamento Stripe e Mercado Pago."/></td>
+    <td><img src="previews/adm.png" alt="Dashboard do administrador para gerenciamento de promoções de produtos."/></td>
+    <td><img src="previews/vendedor.png" alt="Dashboard do vendedor para analisar e gerenciar todas as suas vendas."/></td>
+  </tr>
+</table>
+
+---
+
 ## ✅ Funcionalidades
 
 - **Três Perfis de Usuário:**
